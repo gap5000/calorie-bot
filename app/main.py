@@ -1,12 +1,14 @@
 import asyncio
 import os
 
+from app.database.init_db import create_tables
 from aiogram import Bot
 from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
 from dotenv import load_dotenv
 from aiogram import Bot, Dispatcher
 from app.handlers.start import router as start_router
+from app.handlers.metabolism import router as metabolism_router
 
 load_dotenv()
 
@@ -24,8 +26,10 @@ bot = Bot(
 
 dp = Dispatcher()
 dp.include_router(start_router)
+dp.include_router(metabolism_router)
 
 async def main() -> None:
+    await create_tables()
     bot_info = await bot.get_me()
 
     print(f"Бот @{bot_info.username} успешно запущен")
@@ -35,4 +39,7 @@ async def main() -> None:
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    with asyncio.Runner(
+        loop_factory=asyncio.SelectorEventLoop
+    ) as runner:
+        runner.run(main())
