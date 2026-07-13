@@ -3,12 +3,16 @@ import os
 
 from app.database.init_db import create_tables
 from aiogram import Bot
+from app.handlers.features import router as features_router
 from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
 from dotenv import load_dotenv
 from aiogram import Bot, Dispatcher
 from app.handlers.start import router as start_router
 from app.handlers.metabolism import router as metabolism_router
+from app.handlers.nutrition_goal import (
+    router as nutrition_goal_router,
+)
 
 load_dotenv()
 
@@ -27,6 +31,8 @@ bot = Bot(
 dp = Dispatcher()
 dp.include_router(start_router)
 dp.include_router(metabolism_router)
+dp.include_router(features_router)
+dp.include_router(nutrition_goal_router)
 
 async def main() -> None:
     await create_tables()

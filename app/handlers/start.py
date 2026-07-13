@@ -8,6 +8,7 @@ from app.keyboards.language import language_keyboard
 from app.keyboards.main import get_main_keyboard
 from app.locales.texts import get_text
 from app.models.user import User
+from app.services.user_settings import get_or_create_user_settings
 
 router = Router(name=__name__)
 
@@ -27,6 +28,13 @@ async def start_handler(message: Message) -> None:
         )
 
         user = result.scalar_one_or_none()
+
+        if user is not None:
+            await get_or_create_user_settings(
+                session=session,
+                user_id=user.id,
+            )
+            await session.commit()
 
     if user is None or user.language is None:
         await message.answer(
@@ -73,10 +81,17 @@ async def language_handler(callback: CallbackQuery) -> None:
                 language=language,
             )
             session.add(user)
+
+            await session.flush()
         else:
             user.username = telegram_user.username
             user.first_name = telegram_user.first_name
             user.language = language
+
+        await get_or_create_user_settings(
+            session=session,
+            user_id=user.id,
+        )
 
         await session.commit()
 

@@ -8,6 +8,49 @@ TRANSLATIONS = {
         "🏠 <b>Главное меню</b>\n\n"
         "Выберите нужное действие."
         ),
+        "features_text": (
+        "ℹ️ <b>Возможности бота</b>\n\n"
+        "🥗 <b>Учёт питания</b>\n"
+        "Добавление калорий, белков, жиров и углеводов.\n\n"
+        "📊 <b>Дневной прогресс</b>\n"
+        "Показывает, сколько уже съедено и сколько осталось.\n\n"
+        "🔥 <b>Расчёт нормы</b>\n"
+        "Рассчитывает базовый обмен и примерный дневной расход.\n\n"
+        "🏋️ <b>Силовые тренировки</b>\n"
+        "В будущем здесь появится дневник упражнений, подходов и веса.\n\n"
+        "📦 <b>Продукты</b>\n"
+        "Позже можно будет добавлять продукты по штрихкоду и фото."
+        ),
+        "goal_intro": (
+            "🎯 <b>Настройка дневной цели КБЖУ</b>\n\n"
+            "Шаг 1 из 4\n"
+            "🔥 Введите дневную норму калорий:"
+        ),
+        "enter_protein_goal": (
+            "Шаг 2 из 4\n\n"
+            "🥩 Введите дневную норму белка в граммах:"
+        ),
+        "enter_fat_goal": (
+            "Шаг 3 из 4\n\n"
+            "🥑 Введите дневную норму жиров в граммах:"
+        ),
+        "enter_carbs_goal": (
+            "Шаг 4 из 4\n\n"
+            "🍚 Введите дневную норму углеводов в граммах:"
+        ),
+        "invalid_calories_goal": (
+            "Введите целое число от 500 до 10 000 ккал."
+        ),
+        "invalid_macro_goal": (
+            "Введите число от 0 до 1000 граммов."
+        ),
+        "goal_saved": (
+            "✅ <b>Дневная цель сохранена</b>\n\n"
+            "🔥 Калории: <b>{calories} ккал</b>\n"
+            "🥩 Белки: <b>{protein} г</b>\n"
+            "🥑 Жиры: <b>{fat} г</b>\n"
+            "🍚 Углеводы: <b>{carbs} г</b>"
+        ),
         "metabolism_intro": (
         "🔥 <b>Расчёт дневной нормы</b>\n\n"
         "Ответьте на несколько вопросов. "
@@ -50,6 +93,49 @@ TRANSLATIONS = {
         "Answer a few questions. "
         "The result will be an estimate.\n\n"
         "Step 1 of 5: choose your sex."
+        ),
+        "features_text": (
+        "ℹ️ <b>Bot features</b>\n\n"
+        "🥗 <b>Nutrition tracking</b>\n"
+        "Add calories, protein, fat, and carbohydrates.\n\n"
+        "📊 <b>Daily progress</b>\n"
+        "See how much you have consumed and how much remains.\n\n"
+        "🔥 <b>Daily needs calculator</b>\n"
+        "Calculate your basal metabolism and estimated daily expenditure.\n\n"
+        "🏋️ <b>Strength workouts</b>\n"
+        "A workout log for exercises, sets, reps, and weights is planned.\n\n"
+        "📦 <b>Products</b>\n"
+        "Barcode and photo-based product entry will be added later."
+        ),
+        "goal_intro": (
+            "🎯 <b>Set your daily calorie and macro goals</b>\n\n"
+            "Step 1 of 4\n"
+            "🔥 Enter your daily calorie goal:"
+        ),
+        "enter_protein_goal": (
+            "Step 2 of 4\n\n"
+            "🥩 Enter your daily protein goal in grams:"
+        ),
+        "enter_fat_goal": (
+            "Step 3 of 4\n\n"
+            "🥑 Enter your daily fat goal in grams:"
+        ),
+        "enter_carbs_goal": (
+            "Step 4 of 4\n\n"
+            "🍚 Enter your daily carbohydrate goal in grams:"
+        ),
+        "invalid_calories_goal": (
+            "Enter a whole number between 500 and 10,000 kcal."
+        ),
+        "invalid_macro_goal": (
+            "Enter a number between 0 and 1,000 grams."
+        ),
+        "goal_saved": (
+            "✅ <b>Daily goal saved</b>\n\n"
+            "🔥 Calories: <b>{calories} kcal</b>\n"
+            "🥩 Protein: <b>{protein} g</b>\n"
+            "🥑 Fat: <b>{fat} g</b>\n"
+            "🍚 Carbohydrates: <b>{carbs} g</b>"
         ),
         "enter_age": "Step 2 of 5\n\n🎂 Enter your age:",
         "enter_height": (

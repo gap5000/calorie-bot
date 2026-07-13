@@ -1,6 +1,7 @@
 from app.database.connection import engine
 from app.models.base import Base
 from app.models.user import User
+from app.models.user_settings import UserSettings
 
 
 async def create_tables() -> None:

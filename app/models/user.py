@@ -2,9 +2,13 @@ from datetime import datetime
 
 from sqlalchemy import BigInteger, DateTime, String, func
 from sqlalchemy.orm import Mapped, mapped_column
+from typing import TYPE_CHECKING
 
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.models.base import Base
 
+if TYPE_CHECKING:
+    from app.models.user_settings import UserSettings
 
 class User(Base):
     __tablename__ = "users"
@@ -34,4 +38,10 @@ class User(Base):
         DateTime(timezone=True),
         server_default=func.now(),
         nullable=False,
+    )
+
+    settings: Mapped["UserSettings | None"] = relationship(
+    back_populates="user",
+    cascade="all, delete-orphan",
+    uselist=False,
     )

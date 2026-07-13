@@ -1,15 +1,13 @@
 from aiogram import F, Router
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery, Message
-from sqlalchemy import select
+from app.services.users import get_user_language
 
-from app.database.session import session_factory
 from app.keyboards.metabolism import (
     activity_keyboard,
     gender_keyboard,
 )
 from app.locales.texts import get_text
-from app.models.user import User
 from app.services.metabolism import (
     ACTIVITY_FACTORS,
     calculate_bmr,
@@ -18,20 +16,6 @@ from app.services.metabolism import (
 from app.states.metabolism import MetabolismForm
 
 router = Router(name=__name__)
-
-
-async def get_user_language(telegram_id: int) -> str:
-    async with session_factory() as session:
-        result = await session.execute(
-            select(User).where(User.telegram_id == telegram_id)
-        )
-        user = result.scalar_one_or_none()
-
-    if user is None or user.language not in {"ru", "en"}:
-        return "en"
-
-    return user.language
-
 
 @router.message(
     F.text.in_(
