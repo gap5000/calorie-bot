@@ -24,6 +24,12 @@ class User(Base):
         String(64),
         nullable=False,
     )
+
+    language: Mapped[str | None] = mapped_column(
+    String(2),
+    nullable=True,             
+    )
+    
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         server_default=func.now(),
