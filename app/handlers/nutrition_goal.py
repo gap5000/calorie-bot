@@ -9,6 +9,7 @@ from app.models.user import User
 from app.services.user_settings import update_nutrition_goal
 from app.services.users import get_user_language
 from app.states.nutrition_goal import NutritionGoalForm
+from app.services.nutrition import calculate_calories_from_macros
 
 router = Router(name=__name__)
 
@@ -88,8 +89,26 @@ async def process_protein(
     await state.update_data(protein=protein)
     await state.set_state(NutritionGoalForm.fat)
 
+    calculated_calories = calculate_calories_from_macros(
+        protein=protein,
+        fat=0,
+        carbs=0,
+    )
+
+    if language == "ru":
+        progress_text = (
+            "\n\n🧮 Сейчас по БЖУ: "
+            f"<b>{calculated_calories} ккал</b>"
+        )
+    else:
+        progress_text = (
+            "\n\n🧮 Current calories from macros: "
+            f"<b>{calculated_calories} kcal</b>"
+        )
+
     await message.answer(
         get_text("enter_fat_goal", language)
+        + progress_text
     )
 
 
@@ -100,6 +119,7 @@ async def process_fat(
 ) -> None:
     data = await state.get_data()
     language = data.get("language", "en")
+    protein = data["protein"]
 
     fat = parse_macro_value(message.text)
 
@@ -112,10 +132,27 @@ async def process_fat(
     await state.update_data(fat=fat)
     await state.set_state(NutritionGoalForm.carbs)
 
-    await message.answer(
-        get_text("enter_carbs_goal", language)
+    calculated_calories = calculate_calories_from_macros(
+        protein=protein,
+        fat=fat,
+        carbs=0,
     )
 
+    if language == "ru":
+        progress_text = (
+            f"\n\n🧮 Сейчас по БЖУ: "
+            f"<b>{calculated_calories} ккал</b>"
+        )
+    else:
+        progress_text = (
+            f"\n\n🧮 Current calories from macros: "
+            f"<b>{calculated_calories} kcal</b>"
+        )
+
+    await message.answer(
+        get_text("enter_carbs_goal", language)
+        + progress_text
+    )
 
 @router.message(NutritionGoalForm.carbs)
 async def process_carbs(
@@ -139,6 +176,11 @@ async def process_carbs(
     calories = data["calories"]
     protein = data["protein"]
     fat = data["fat"]
+    calculated_calories = calculate_calories_from_macros(
+    protein=protein,
+    fat=fat,
+    carbs=carbs,
+)
 
     async with session_factory() as session:
         result = await session.execute(
@@ -172,11 +214,11 @@ async def process_carbs(
 
     result_text = get_text("goal_saved", language).format(
         calories=calories,
+        calculated_calories=calculated_calories,
         protein=format_number(protein),
         fat=format_number(fat),
         carbs=format_number(carbs),
     )
-
     await message.answer(result_text)
 
 

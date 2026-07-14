@@ -9,6 +9,7 @@ from app.database.session import session_factory
 from app.keyboards.workout import get_workout_actions_keyboard
 from app.locales.texts import get_text
 from app.models.user import User
+from app.keyboards.main import get_main_keyboard
 from app.services.users import get_user_language
 from app.services.workouts import WorkoutSetData, save_workout
 from app.states.workout import WorkoutForm
@@ -68,7 +69,8 @@ async def cancel_workout(
     await state.clear()
 
     await message.answer(
-        get_text("workout_cancelled", language)
+        get_text("workout_cancelled", language),
+        reply_markup=get_main_keyboard(language),
     )
 
 @router.callback_query(
@@ -413,7 +415,8 @@ async def finish_workout(
             get_text("workout_saved", language).format(
                 summary=summary,
                 sets_count=len(sets),
-            )
+            ),
+            reply_markup=get_main_keyboard(language),
         )
 
 

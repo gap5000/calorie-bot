@@ -130,6 +130,15 @@ TRANSLATIONS = {
         "nutrition_entry_not_found": (
             "Запись не найдена или уже была удалена."
         ),
+        "goal_saved": (
+            "✅ <b>Дневная цель сохранена</b>\n\n"
+            "🔥 Введённые калории: <b>{calories} ккал</b>\n"
+            "🧮 Калории по БЖУ: "
+            "<b>{calculated_calories} ккал</b>\n\n"
+            "🥩 Белки: <b>{protein} г</b>\n"
+            "🥑 Жиры: <b>{fat} г</b>\n"
+            "🍚 Углеводы: <b>{carbs} г</b>"
+        ),
         "nutrition_entry_deleted": (
             "🗑 Запись удалена:\n\n"
             "🍽 <b>{name}</b>\n"
@@ -165,8 +174,10 @@ TRANSLATIONS = {
         ),
         "nutrition_entry_saved": (
             "✅ <b>Питание добавлено</b>\n\n"
-            "🍽 {name}\n"
-            "🔥 {calories} ккал\n"
+            "🍽 {name}\n\n"
+            "🔥 Введённые калории: <b>{calories} ккал</b>\n"
+            "🧮 Калории по БЖУ: "
+            "<b>{calculated_calories} ккал</b>\n\n"
             "🥩 {protein} г белка\n"
             "🥑 {fat} г жиров\n"
             "🍚 {carbs} г углеводов"
@@ -217,6 +228,15 @@ TRANSLATIONS = {
             "✅ <b>Workout saved</b>\n\n"
             "{summary}\n\n"
             "Total sets: <b>{sets_count}</b>"
+        ),
+        "goal_saved": (
+            "✅ <b>Daily goal saved</b>\n\n"
+            "🔥 Entered calories: <b>{calories} kcal</b>\n"
+            "🧮 Calories calculated from macros: "
+            "<b>{calculated_calories} kcal</b>\n\n"
+            "🥩 Protein: <b>{protein} g</b>\n"
+            "🥑 Fat: <b>{fat} g</b>\n"
+            "🍚 Carbohydrates: <b>{carbs} g</b>"
         ),
         "workout_cancelled": "❌ Workout cancelled.",
         "metabolism_intro": (
@@ -347,8 +367,10 @@ TRANSLATIONS = {
         ),
         "nutrition_entry_saved": (
             "✅ <b>Nutrition added</b>\n\n"
-            "🍽 {name}\n"
-            "🔥 {calories} kcal\n"
+            "🍽 {name}\n\n"
+            "🔥 Entered calories: <b>{calories} kcal</b>\n"
+            "🧮 Calories from macros: "
+            "<b>{calculated_calories} kcal</b>\n\n"
             "🥩 {protein} g protein\n"
             "🥑 {fat} g fat\n"
             "🍚 {carbs} g carbohydrates"

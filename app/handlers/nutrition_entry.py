@@ -9,6 +9,7 @@ from app.models.nutrition_entry import NutritionEntry
 from app.models.user import User
 from app.services.users import get_user_language
 from app.states.nutrition_entry import NutritionEntryForm
+from app.services.nutrition import calculate_calories_from_macros
 
 router = Router(name=__name__)
 
@@ -133,12 +134,11 @@ async def process_carbs(
     language = data.get("language", "en")
 
     carbs = parse_macro(message.text)
-
-    if carbs is None:
-        await message.answer(
-            get_text("nutrition_invalid_macro", language)
-        )
-        return
+    calculated_calories = calculate_calories_from_macros(
+        protein=data["protein"],
+        fat=data["fat"],
+        carbs=carbs,
+    )
 
     async with session_factory() as session:
         result = await session.execute(
@@ -170,15 +170,19 @@ async def process_carbs(
 
     await state.clear()
 
-    await message.answer(
-        get_text("nutrition_entry_saved", language).format(
-            name=data["name"],
-            calories=data["calories"],
-            protein=format_number(data["protein"]),
-            fat=format_number(data["fat"]),
-            carbs=format_number(carbs),
-        )
+    result_text = get_text(
+        "nutrition_entry_saved",
+        language,
+    ).format(
+        name=data["name"],
+        calories=data["calories"],
+        calculated_calories=calculated_calories,
+        protein=format_number(data["protein"]),
+        fat=format_number(data["fat"]),
+        carbs=format_number(carbs),
     )
+
+    await message.answer(result_text)
 
 
 async def process_macro(
