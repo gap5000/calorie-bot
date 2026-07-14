@@ -51,7 +51,6 @@ TRANSLATIONS = {
         "Показывает, сколько уже съедено и сколько осталось.\n\n"
         "🔥 <b>Расчёт нормы</b>\n"
         "Рассчитывает базовый обмен и примерный дневной расход.\n\n"
-        "🏋️ <b>Силовые тренировки</b>\n"
         "В будущем здесь появится дневник упражнений, подходов и веса.\n\n"
         "📦 <b>Продукты</b>\n"
         "Позже можно будет добавлять продукты по штрихкоду и фото."
@@ -61,6 +60,7 @@ TRANSLATIONS = {
             "Шаг 1 из 4\n"
             "🔥 Введите дневную норму калорий:"
         ),
+        "workout": "💪 Силовые",
         "enter_protein_goal": (
             "Шаг 2 из 4\n\n"
             "🥩 Введите дневную норму белка в граммах:"
@@ -78,6 +78,19 @@ TRANSLATIONS = {
         ),
         "invalid_macro_goal": (
             "Введите число от 0 до 1000 граммов."
+        ),
+        "workout_choose_category": (
+            "🏋️ <b>Новая силовая тренировка</b>\n\n"
+            "Выберите группу мышц или введите своё упражнение."
+        ),
+        "workout_choose_exercise": (
+            "Выберите упражнение:"
+        ),
+        "workout_enter_custom_exercise": (
+            "✍️ Введите название упражнения:"
+        ),
+        "workout_enter_next_exercise": (
+            "Выберите группу мышц для следующего упражнения:"
         ),
         "goal_saved": (
             "✅ <b>Дневная цель сохранена</b>\n\n"
@@ -107,12 +120,60 @@ TRANSLATIONS = {
             "Я помогу вам считать калории и БЖУ, "
             "следить за дневной целью и записывать тренировки."
         ),
+        "nutrition_history_title": (
+            "📋 <b>Питание за сегодня</b>\n\n"
+            "Выберите запись, если хотите её удалить."
+        ),
+        "nutrition_history_empty": (
+            "Сегодня ещё нет записей о питании."
+        ),
+        "nutrition_entry_not_found": (
+            "Запись не найдена или уже была удалена."
+        ),
+        "nutrition_entry_deleted": (
+            "🗑 Запись удалена:\n\n"
+            "🍽 <b>{name}</b>\n"
+            "🔥 {calories} ккал"
+        ),
+        "nutrition_delete_button": (
+            "🗑 {name} — {calories} ккал"
+        ),
         "set_goal": "🎯 Настроить цель КБЖУ",
         "add_nutrition": "➕ Добавить питание",
         "today": "📊 Сегодня",
+        "help": "❓ Помощь",
         "calculate_norm": "🔥 Рассчитать норму",
-        "workout": "🏋️ Силовая тренировка",
         "features": "ℹ️ Возможности бота",
+        "nutrition_entry_intro": (
+            "➕ <b>Добавление питания</b>\n\n"
+            "Введите название блюда или приёма пищи.\n"
+            "Например: <i>Завтрак</i> или <i>Курица с рисом</i>"
+        ),
+        "nutrition_history": "📋 История питания",
+        "nutrition_enter_calories": "🔥 Введите количество калорий:",
+        "nutrition_enter_protein": "🥩 Введите количество белка в граммах:",
+        "nutrition_enter_fat": "🥑 Введите количество жиров в граммах:",
+        "nutrition_enter_carbs": "🍚 Введите количество углеводов в граммах:",
+        "nutrition_invalid_name": (
+            "Введите название длиной от 2 до 100 символов."
+        ),
+        "nutrition_invalid_calories": (
+            "Введите целое число от 0 до 10 000 ккал."
+        ),
+        "nutrition_invalid_macro": (
+            "Введите число от 0 до 1000 граммов."
+        ),
+        "nutrition_entry_saved": (
+            "✅ <b>Питание добавлено</b>\n\n"
+            "🍽 {name}\n"
+            "🔥 {calories} ккал\n"
+            "🥩 {protein} г белка\n"
+            "🥑 {fat} г жиров\n"
+            "🍚 {carbs} г углеводов"
+        ),
+        "nutrition_goal_missing": (
+            "Сначала настройте дневную цель КБЖУ."
+        ),
     },
     "en": {
         "choose_language": (
@@ -172,7 +233,6 @@ TRANSLATIONS = {
         "See how much you have consumed and how much remains.\n\n"
         "🔥 <b>Daily needs calculator</b>\n"
         "Calculate your basal metabolism and estimated daily expenditure.\n\n"
-        "🏋️ <b>Strength workouts</b>\n"
         "A workout log for exercises, sets, reps, and weights is planned.\n\n"
         "📦 <b>Products</b>\n"
         "Barcode and photo-based product entry will be added later."
@@ -207,11 +267,25 @@ TRANSLATIONS = {
             "🥑 Fat: <b>{fat} g</b>\n"
             "🍚 Carbohydrates: <b>{carbs} g</b>"
         ),
+        "workout_choose_category": (
+            "🏋️ <b>New strength workout</b>\n\n"
+            "Choose a muscle group or enter a custom exercise."
+        ),
+        "workout_choose_exercise": (
+            "Choose an exercise:"
+        ),
+        "workout_enter_custom_exercise": (
+            "✍️ Enter the exercise name:"
+        ),
+        "workout_enter_next_exercise": (
+            "Choose a muscle group for the next exercise:"
+        ),
         "enter_age": "Step 2 of 5\n\n🎂 Enter your age:",
         "enter_height": (
         "Step 3 of 5\n\n"
         "📏 Enter your height in centimetres:"
         ),
+        "workout": "💪 Strength training",
         "enter_weight": (
         "Step 4 of 5\n\n"
         "⚖️ Enter your weight in kilograms:"
@@ -231,9 +305,57 @@ TRANSLATIONS = {
         "set_goal": "🎯 Set calorie and macro goals",
         "add_nutrition": "➕ Add nutrition",
         "today": "📊 Today",
+        "help": "❓ Help",
         "calculate_norm": "🔥 Calculate daily needs",
-        "workout": "🏋️ Strength workout",
         "features": "ℹ️ Bot features",
+        "nutrition_entry_intro": (
+            "➕ <b>Add nutrition</b>\n\n"
+            "Enter the meal or food name.\n"
+            "For example: <i>Breakfast</i> or <i>Chicken and rice</i>"
+        ),
+        "nutrition_history": "📋 Nutrition history",
+        "nutrition_enter_calories": "🔥 Enter the number of calories:",
+        "nutrition_enter_protein": "🥩 Enter protein in grams:",
+        "nutrition_enter_fat": "🥑 Enter fat in grams:",
+        "nutrition_enter_carbs": "🍚 Enter carbohydrates in grams:",
+        "nutrition_invalid_name": (
+            "Enter a name between 2 and 100 characters."
+        ),
+        "nutrition_invalid_calories": (
+            "Enter a whole number between 0 and 10,000 kcal."
+        ),
+        "nutrition_history_title": (
+            "📋 <b>Today's nutrition</b>\n\n"
+            "Select an entry if you want to delete it."
+        ),
+        "nutrition_history_empty": (
+            "There are no nutrition entries for today."
+        ),
+        "nutrition_entry_not_found": (
+            "The entry was not found or has already been deleted."
+        ),
+        "nutrition_entry_deleted": (
+            "🗑 Entry deleted:\n\n"
+            "🍽 <b>{name}</b>\n"
+            "🔥 {calories} kcal"
+        ),
+        "nutrition_delete_button": (
+            "🗑 {name} — {calories} kcal"
+        ),
+        "nutrition_invalid_macro": (
+            "Enter a number between 0 and 1,000 grams."
+        ),
+        "nutrition_entry_saved": (
+            "✅ <b>Nutrition added</b>\n\n"
+            "🍽 {name}\n"
+            "🔥 {calories} kcal\n"
+            "🥩 {protein} g protein\n"
+            "🥑 {fat} g fat\n"
+            "🍚 {carbs} g carbohydrates"
+        ),
+        "nutrition_goal_missing": (
+            "Set your daily calorie and macro goals first."
+        ),
     },
 }
 

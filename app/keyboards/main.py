@@ -21,10 +21,20 @@ def get_main_keyboard(language: str) -> ReplyKeyboardMarkup:
             ],
             [
                 KeyboardButton(
+                    text=get_text("nutrition_history", language)
+                ),
+            ],
+            [
+                KeyboardButton(
                     text=get_text("calculate_norm", language)
                 ),
             ],
             [
+                KeyboardButton(
+                    text=get_text("help", language)
+                ),
+
+               
                 KeyboardButton(
                     text=get_text("workout", language)
                 ),

@@ -1,9 +1,11 @@
 from app.database.connection import engine
 from app.models.base import Base
+from app.models.nutrition_entry import NutritionEntry
 from app.models.user import User
 from app.models.user_settings import UserSettings
 from app.models.workout import Workout
 from app.models.workout_set import WorkoutSet
+
 
 async def create_tables() -> None:
     async with engine.begin() as connection:

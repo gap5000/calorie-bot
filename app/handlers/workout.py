@@ -3,6 +3,7 @@ from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery, Message
 from sqlalchemy import select
+from app.data.exercises import get_exercise_name
 
 from app.database.session import session_factory
 from app.keyboards.workout import get_workout_actions_keyboard
@@ -12,14 +13,20 @@ from app.services.users import get_user_language
 from app.services.workouts import WorkoutSetData, save_workout
 from app.states.workout import WorkoutForm
 
+from app.keyboards.workout import (
+    get_categories_keyboard,
+    get_exercises_keyboard,
+    get_workout_actions_keyboard,
+)
+
 router = Router(name=__name__)
 
 
 @router.message(
     F.text.in_(
         {
-            "🏋️ Силовая тренировка",
-            "🏋️ Strength workout",
+            "🏋️ Начать тренировку",
+            "🏋️ Start workout",
         }
     )
 )
@@ -37,10 +44,11 @@ async def start_workout(
         language=language,
         sets=[],
     )
-    await state.set_state(WorkoutForm.exercise_name)
+    await state.set_state(WorkoutForm.category)
 
     await message.answer(
-        get_text("workout_intro", language)
+        get_text("workout_choose_category", language),
+        reply_markup=get_categories_keyboard(language),
     )
 
 
@@ -63,9 +71,112 @@ async def cancel_workout(
         get_text("workout_cancelled", language)
     )
 
+@router.callback_query(
+    WorkoutForm.category,
+    F.data.startswith("workout_category:"),
+)
+async def process_workout_category(
+    callback: CallbackQuery,
+    state: FSMContext,
+) -> None:
+    if callback.data is None:
+        await callback.answer()
+        return
 
-@router.message(WorkoutForm.exercise_name)
-async def process_exercise_name(
+    category = callback.data.split(":")[1]
+
+    data = await state.get_data()
+    language = data.get("language", "en")
+
+    await state.update_data(current_category=category)
+    await state.set_state(WorkoutForm.exercise)
+
+    await callback.answer()
+
+    if callback.message:
+        await callback.message.answer(
+            get_text("workout_choose_exercise", language),
+            reply_markup=get_exercises_keyboard(
+                category=category,
+                language=language,
+            ),
+        )
+
+@router.callback_query(
+    WorkoutForm.exercise,
+    F.data.startswith("workout_exercise:"),
+)
+async def process_catalog_exercise(
+    callback: CallbackQuery,
+    state: FSMContext,
+) -> None:
+    if callback.data is None:
+        await callback.answer()
+        return
+
+    exercise_code = callback.data.split(":")[1]
+
+    data = await state.get_data()
+    language = data.get("language", "en")
+
+    if exercise_code == "custom":
+        await state.set_state(WorkoutForm.custom_exercise)
+        await callback.answer()
+
+        if callback.message:
+            await callback.message.answer(
+                get_text(
+                    "workout_enter_custom_exercise",
+                    language,
+                )
+            )
+        return
+
+    exercise_name = get_exercise_name(
+        exercise_code=exercise_code,
+        language=language,
+    )
+
+    if exercise_name is None:
+        await callback.answer("Unknown exercise")
+        return
+
+    await state.update_data(
+        current_exercise_code=exercise_code,
+        current_exercise=exercise_name,
+    )
+    await state.set_state(WorkoutForm.weight)
+
+    await callback.answer()
+
+    if callback.message:
+        await callback.message.answer(
+            get_text("workout_enter_weight", language)
+        )
+
+@router.callback_query(
+    WorkoutForm.category,
+    F.data == "workout_exercise:custom",
+)
+async def request_custom_exercise_from_category(
+    callback: CallbackQuery,
+    state: FSMContext,
+) -> None:
+    data = await state.get_data()
+    language = data.get("language", "en")
+
+    await state.set_state(WorkoutForm.custom_exercise)
+    await callback.answer()
+
+    if callback.message:
+        await callback.message.answer(
+            get_text(
+                "workout_enter_custom_exercise",
+                language,
+            )
+        )
+@router.message(WorkoutForm.custom_exercise)
+async def process_custom_exercise(
     message: Message,
     state: FSMContext,
 ) -> None:
@@ -81,15 +192,33 @@ async def process_exercise_name(
         return
 
     await state.update_data(
-        current_exercise=exercise_name
+        current_exercise_code="custom",
+        current_exercise=exercise_name,
     )
     await state.set_state(WorkoutForm.weight)
 
     await message.answer(
         get_text("workout_enter_weight", language)
     )
+@router.callback_query(
+    WorkoutForm.exercise,
+    F.data == "workout:back_to_categories",
+)
+async def back_to_workout_categories(
+    callback: CallbackQuery,
+    state: FSMContext,
+) -> None:
+    data = await state.get_data()
+    language = data.get("language", "en")
 
+    await state.set_state(WorkoutForm.category)
+    await callback.answer()
 
+    if callback.message:
+        await callback.message.answer(
+            get_text("workout_choose_category", language),
+            reply_markup=get_categories_keyboard(language),
+        )
 @router.message(WorkoutForm.weight)
 async def process_weight(
     message: Message,
@@ -218,17 +347,14 @@ async def add_new_exercise(
     data = await state.get_data()
     language = data.get("language", "en")
 
-    await state.set_state(WorkoutForm.exercise_name)
+    await state.set_state(WorkoutForm.category)
     await callback.answer()
 
     if callback.message:
-        if language == "ru":
-            text = "Введите название следующего упражнения:"
-        else:
-            text = "Enter the name of the next exercise:"
-
-        await callback.message.answer(text)
-
+        await callback.message.answer(
+            get_text("workout_enter_next_exercise", language),
+            reply_markup=get_categories_keyboard(language),
+        )
 
 @router.callback_query(
     WorkoutForm.next_action,

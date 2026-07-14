@@ -8,6 +8,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.models.base import Base
 
 if TYPE_CHECKING:
+    from app.models.nutrition_entry import NutritionEntry
     from app.models.user_settings import UserSettings
     from app.models.workout import Workout
 
@@ -23,7 +24,7 @@ class User(Base):
     )
     workouts: Mapped[list["Workout"]] = relationship(
         back_populates="user",
-        cascade="all, delete-orphan",
+        cascade="all, delete-orphan",    
     )
     username: Mapped[str | None] = mapped_column(
         String(32),
@@ -35,8 +36,8 @@ class User(Base):
     )
 
     language: Mapped[str | None] = mapped_column(
-    String(2),
-    nullable=True,             
+        String(2),
+        nullable=True,             
     )
     
     created_at: Mapped[datetime] = mapped_column(
@@ -46,7 +47,11 @@ class User(Base):
     )
 
     settings: Mapped["UserSettings | None"] = relationship(
-    back_populates="user",
-    cascade="all, delete-orphan",
-    uselist=False,
+        back_populates="user",
+        cascade="all, delete-orphan",
+        uselist=False,
     )
+    nutrition_entries: Mapped[list["NutritionEntry"]] = relationship(
+        back_populates="user",
+        cascade="all, delete-orphan",
+)
