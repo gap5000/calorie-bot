@@ -8,6 +8,41 @@ TRANSLATIONS = {
         "🏠 <b>Главное меню</b>\n\n"
         "Выберите нужное действие."
         ),
+        "workout_intro": (
+            "🏋️ <b>Новая силовая тренировка</b>\n\n"
+            "Введите название первого упражнения.\n\n"
+            "Например: <i>Жим лёжа</i>"
+        ),
+        "workout_enter_weight": (
+            "⚖️ Введите рабочий вес в килограммах.\n\n"
+            "Для упражнения с собственным весом введите 0."
+        ),
+        "workout_enter_repetitions": (
+            "🔁 Введите количество повторений:"
+        ),
+        "workout_invalid_exercise": (
+            "Введите название упражнения длиной от 2 до 100 символов."
+        ),
+        "workout_invalid_weight": (
+            "Введите вес числом от 0 до 1000 кг."
+        ),
+        "workout_invalid_repetitions": (
+            "Введите целое количество повторений от 1 до 1000."
+        ),
+        "workout_set_added": (
+            "✅ <b>Подход добавлен</b>\n\n"
+            "{exercise}\n"
+            "Подход №{set_number}: {weight} кг × {repetitions}"
+        ),
+        "workout_empty": (
+            "В тренировке пока нет ни одного подхода."
+        ),
+        "workout_saved": (
+            "✅ <b>Тренировка сохранена</b>\n\n"
+            "{summary}\n\n"
+            "Всего подходов: <b>{sets_count}</b>"
+        ),
+        "workout_cancelled": "❌ Тренировка отменена.",
         "features_text": (
         "ℹ️ <b>Возможности бота</b>\n\n"
         "🥗 <b>Учёт питания</b>\n"
@@ -88,6 +123,41 @@ TRANSLATIONS = {
         "🏠 <b>Main menu</b>\n\n"
         "Choose an action."
         ),
+        "workout_intro": (
+            "🏋️ <b>New strength workout</b>\n\n"
+            "Enter the name of your first exercise.\n\n"
+            "For example: <i>Bench press</i>"
+        ),
+        "workout_enter_weight": (
+            "⚖️ Enter the working weight in kilograms.\n\n"
+            "Enter 0 for a bodyweight exercise."
+        ),
+        "workout_enter_repetitions": (
+            "🔁 Enter the number of repetitions:"
+        ),
+        "workout_invalid_exercise": (
+            "Enter an exercise name between 2 and 100 characters."
+        ),
+        "workout_invalid_weight": (
+            "Enter a weight between 0 and 1,000 kg."
+        ),
+        "workout_invalid_repetitions": (
+            "Enter a whole number of repetitions between 1 and 1,000."
+        ),
+        "workout_set_added": (
+            "✅ <b>Set added</b>\n\n"
+            "{exercise}\n"
+            "Set #{set_number}: {weight} kg × {repetitions}"
+        ),
+        "workout_empty": (
+            "There are no sets in this workout yet."
+        ),
+        "workout_saved": (
+            "✅ <b>Workout saved</b>\n\n"
+            "{summary}\n\n"
+            "Total sets: <b>{sets_count}</b>"
+        ),
+        "workout_cancelled": "❌ Workout cancelled.",
         "metabolism_intro": (
         "🔥 <b>Daily calorie calculation</b>\n\n"
         "Answer a few questions. "

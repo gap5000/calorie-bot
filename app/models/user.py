@@ -9,6 +9,7 @@ from app.models.base import Base
 
 if TYPE_CHECKING:
     from app.models.user_settings import UserSettings
+    from app.models.workout import Workout
 
 class User(Base):
     __tablename__ = "users"
@@ -19,6 +20,10 @@ class User(Base):
         unique=True,
         nullable=False,
         index=True,
+    )
+    workouts: Mapped[list["Workout"]] = relationship(
+        back_populates="user",
+        cascade="all, delete-orphan",
     )
     username: Mapped[str | None] = mapped_column(
         String(32),
