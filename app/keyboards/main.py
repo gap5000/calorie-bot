@@ -8,12 +8,7 @@ def get_main_keyboard(language: str) -> ReplyKeyboardMarkup:
         keyboard=[
             [
                 KeyboardButton(
-                    text=get_text("set_goal", language)
-                )
-            ],
-            [
-                KeyboardButton(
-                    text=get_text("add_nutrition", language)
+                    text=get_text("nutrition", language)
                 ),
                 KeyboardButton(
                     text=get_text("today", language)
@@ -21,7 +16,7 @@ def get_main_keyboard(language: str) -> ReplyKeyboardMarkup:
             ],
             [
                 KeyboardButton(
-                    text=get_text("nutrition_history", language)
+                    text=get_text("set_goal", language)
                 ),
             ],
             [
@@ -31,25 +26,12 @@ def get_main_keyboard(language: str) -> ReplyKeyboardMarkup:
             ],
             [
                 KeyboardButton(
-                    text=get_text("help", language)
-                ),
-
-               
-                KeyboardButton(
                     text=get_text("workout", language)
                 ),
             ],
             [
                 KeyboardButton(
                     text=get_text("features", language)
-                ),
-            ],
-            [
-                KeyboardButton(
-                    text=get_text("search_product", language)
-                ),
-                KeyboardButton(
-                    text=get_text("add_by_barcode", language)
                 ),
             ],
         ],

@@ -124,6 +124,13 @@ TRANSLATIONS = {
             "📋 <b>Питание за сегодня</b>\n\n"
             "Выберите запись, если хотите её удалить."
         ),
+        "nutrition": "🍽 Питание",
+        "add_nutrition": "✍️ Ввести вручную",
+        "nutrition_menu": (
+            "🍽 <b>Питание</b>\n\n"
+            "Выберите способ добавления продукта "
+            "или откройте историю питания."
+        ),
         "nutrition_history_empty": (
             "Сегодня ещё нет записей о питании."
         ),
@@ -555,6 +562,13 @@ TRANSLATIONS = {
         ),
         "nutrition_invalid_calories": (
             "Enter a whole number between 0 and 10,000 kcal."
+        ),
+        "nutrition": "🍽 Nutrition",
+        "add_nutrition": "✍️ Enter manually",
+        "nutrition_menu": (
+            "🍽 <b>Nutrition</b>\n\n"
+            "Choose how to add food or open "
+            "your nutrition history."
         ),
         "nutrition_history_title": (
             "📋 <b>Today's nutrition</b>\n\n"

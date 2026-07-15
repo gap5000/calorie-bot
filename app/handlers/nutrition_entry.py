@@ -17,8 +17,8 @@ router = Router(name=__name__)
 @router.message(
     F.text.in_(
         {
-            "➕ Добавить питание",
-            "➕ Add nutrition",
+            "✍️ Ввести вручную",
+            "✍️ Enter manually",
         }
     )
 )

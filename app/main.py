@@ -24,7 +24,9 @@ from app.handlers.nutrition_history import (
 from app.handlers.product_search import (
     router as product_search_router,
 )
-
+from app.handlers.nutrition_menu import (
+    router as nutrition_menu_router,
+)
 load_dotenv()
 
 BOT_TOKEN = os.getenv("BOT_TOKEN")
@@ -45,12 +47,15 @@ dp = Dispatcher()
 
 dp.include_router(start_router)
 dp.include_router(features_router)
+
+dp.include_router(nutrition_menu_router)
 dp.include_router(nutrition_goal_router)
 dp.include_router(metabolism_router)
 dp.include_router(strength_router)
 dp.include_router(workout_router)
 dp.include_router(nutrition_entry_router)
 dp.include_router(today_router)
+
 dp.include_router(nutrition_history_router)
 dp.include_router(barcode_router)
 dp.include_router(product_search_router)
