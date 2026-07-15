@@ -6,7 +6,7 @@ from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
 from dotenv import load_dotenv
 
-
+from app.handlers.barcode import router as barcode_router
 from app.handlers.today import router as today_router
 from app.database.init_db import create_tables
 from app.handlers.features import router as features_router
@@ -20,6 +20,9 @@ from app.handlers.nutrition_entry import (
 )
 from app.handlers.nutrition_history import (
     router as nutrition_history_router,
+)
+from app.handlers.product_search import (
+    router as product_search_router,
 )
 
 load_dotenv()
@@ -49,6 +52,8 @@ dp.include_router(workout_router)
 dp.include_router(nutrition_entry_router)
 dp.include_router(today_router)
 dp.include_router(nutrition_history_router)
+dp.include_router(barcode_router)
+dp.include_router(product_search_router)
 
 async def main() -> None:
     await create_tables()

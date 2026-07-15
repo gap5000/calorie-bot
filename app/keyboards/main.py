@@ -44,6 +44,14 @@ def get_main_keyboard(language: str) -> ReplyKeyboardMarkup:
                     text=get_text("features", language)
                 ),
             ],
+            [
+                KeyboardButton(
+                    text=get_text("search_product", language)
+                ),
+                KeyboardButton(
+                    text=get_text("add_by_barcode", language)
+                ),
+            ],
         ],
         resize_keyboard=True,
     )

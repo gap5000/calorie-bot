@@ -151,12 +151,118 @@ TRANSLATIONS = {
         "add_nutrition": "➕ Добавить питание",
         "today": "📊 Сегодня",
         "help": "❓ Помощь",
+        "add_by_barcode": "📦 Добавить по штрихкоду",
         "calculate_norm": "🔥 Рассчитать норму",
+        "search_product": "🔎 Найти продукт",
         "features": "ℹ️ Возможности бота",
         "nutrition_entry_intro": (
             "➕ <b>Добавление питания</b>\n\n"
             "Введите название блюда или приёма пищи.\n"
             "Например: <i>Завтрак</i> или <i>Курица с рисом</i>"
+        ),
+        "product_search_intro": (
+            "🔎 <b>Поиск продукта</b>\n\n"
+            "Введите название продукта.\n"
+            "Например: <i>творог</i>, "
+            "<i>молоко</i> или <i>греческий йогурт</i>."
+        ),
+        "product_search_invalid": (
+            "Введите название длиной от 2 до 80 символов."
+        ),
+        "product_searching": "🔍 Ищу подходящие продукты...",
+        "product_search_empty": (
+            "Ничего подходящего не найдено.\n\n"
+            "Попробуйте изменить запрос или добавьте продукт вручную."
+        ),
+        "product_search_results": (
+            "Нашёл несколько вариантов.\n\n"
+            "Выберите подходящий продукт:"
+        ),
+        "product_search_selected": (
+            "✅ <b>{name}</b>\n"
+            "{brand}"
+            "Значения на 100 г:\n"
+            "🔥 {calories} ккал\n"
+            "🥩 {protein} г\n"
+            "🥑 {fat} г\n"
+            "🍚 {carbs} г\n\n"
+            "Введите количество продукта в граммах:"
+        ),
+        "product_search_invalid_amount": (
+            "Введите количество от 1 до 10 000 граммов."
+        ),
+        "product_search_saved": (
+            "✅ <b>Продукт добавлен</b>\n\n"
+            "🍽 {name}\n"
+            "⚖️ {amount} г\n\n"
+            "🔥 {calories} ккал\n"
+            "🥩 {protein} г белка\n"
+            "🥑 {fat} г жиров\n"
+            "🍚 {carbs} г углеводов"
+        ),
+        "barcode_choose_method": (
+            "📦 <b>Добавление по штрихкоду</b>\n\n"
+            "Сфотографируйте штрихкод продукта "
+            "или введите цифры вручную."
+        ),
+        "barcode_send_photo": (
+            "📷 Отправьте фотографию штрихкода.\n\n"
+            "Советы:\n"
+            "— штрихкод должен быть полностью виден;\n"
+            "— фотографируйте без бликов;\n"
+            "— держите камеру ровно;\n"
+            "— не фотографируйте слишком далеко."
+        ),
+        "barcode_photo_required": (
+            "Отправьте фотографию штрихкода."
+        ),
+        "barcode_not_detected": (
+            "Не удалось распознать штрихкод на фотографии.\n\n"
+            "Попробуйте сфотографировать ближе или введите цифры вручную."
+        ),
+        "barcode_multiple_detected": (
+            "На фотографии найдено несколько кодов. "
+            "Использую первый подходящий штрихкод: <b>{barcode}</b>."
+        ),
+        "barcode_intro": (
+            "📦 <b>Добавление по штрихкоду</b>\n\n"
+            "Введите цифры под штрихкодом продукта.\n"
+            "Обычно это 8–14 цифр."
+        ),
+        "barcode_invalid": (
+            "Введите штрихкод, состоящий из 8–14 цифр."
+        ),
+        "barcode_searching": "🔍 Ищу продукт...",
+        "barcode_not_found": (
+            "Продукт не найден или в нём отсутствуют полные данные КБЖУ.\n\n"
+            "Вы можете добавить его вручную."
+        ),
+        "barcode_product_found": (
+            "✅ <b>Продукт найден</b>\n\n"
+            "🍽 <b>{name}</b>\n"
+            "{brand}"
+            "Значения на 100 г:\n"
+            "🔥 {calories} ккал\n"
+            "🥩 {protein} г\n"
+            "🥑 {fat} г\n"
+            "🍚 {carbs} г\n\n"
+            "Введите количество продукта в граммах:"
+        ),
+        "barcode_invalid_amount": (
+            "Введите количество от 1 до 10 000 граммов."
+        ),
+        "barcode_entry_saved": (
+            "✅ <b>Продукт добавлен</b>\n\n"
+            "🍽 {name}\n"
+            "⚖️ Количество: {amount} г\n\n"
+            "🔥 {calories} ккал\n"
+            "🥩 {protein} г белка\n"
+            "🥑 {fat} г жиров\n"
+            "🍚 {carbs} г углеводов"
+        ),
+        "barcode_service_error": (
+            "Не удалось обратиться к базе продуктов. "
+            "Попробуйте немного позже."
         ),
         "nutrition_history": "📋 История питания",
         "nutrition_enter_calories": "🔥 Введите количество калорий:",
@@ -325,13 +431,119 @@ TRANSLATIONS = {
         "set_goal": "🎯 Set calorie and macro goals",
         "add_nutrition": "➕ Add nutrition",
         "today": "📊 Today",
+        "add_by_barcode": "📦 Add by barcode",
         "help": "❓ Help",
         "calculate_norm": "🔥 Calculate daily needs",
+        "search_product": "🔎 Search product",
         "features": "ℹ️ Bot features",
         "nutrition_entry_intro": (
             "➕ <b>Add nutrition</b>\n\n"
             "Enter the meal or food name.\n"
             "For example: <i>Breakfast</i> or <i>Chicken and rice</i>"
+        ),
+        "product_search_intro": (
+            "🔎 <b>Product search</b>\n\n"
+            "Enter a product name.\n"
+            "For example: <i>cottage cheese</i>, "
+            "<i>milk</i>, or <i>Greek yogurt</i>."
+        ),
+        "product_search_invalid": (
+            "Enter a name between 2 and 80 characters."
+        ),
+        "product_searching": "🔍 Searching for products...",
+        "product_search_empty": (
+            "No suitable products were found.\n\n"
+            "Try another query or add the product manually."
+        ),
+        "product_search_results": (
+            "I found several options.\n\n"
+            "Choose the appropriate product:"
+        ),
+        "product_search_selected": (
+            "✅ <b>{name}</b>\n"
+            "{brand}"
+            "Values per 100 g:\n"
+            "🔥 {calories} kcal\n"
+            "🥩 {protein} g\n"
+            "🥑 {fat} g\n"
+            "🍚 {carbs} g\n\n"
+            "Enter the product amount in grams:"
+        ),
+        "product_search_invalid_amount": (
+            "Enter an amount between 1 and 10,000 grams."
+        ),
+        "product_search_saved": (
+            "✅ <b>Product added</b>\n\n"
+            "🍽 {name}\n"
+            "⚖️ {amount} g\n\n"
+            "🔥 {calories} kcal\n"
+            "🥩 {protein} g protein\n"
+            "🥑 {fat} g fat\n"
+            "🍚 {carbs} g carbohydrates"
+        ),
+        "barcode_choose_method": (
+            "📦 <b>Add by barcode</b>\n\n"
+            "Take a photo of the product barcode "
+            "or enter its digits manually."
+        ),
+        "barcode_send_photo": (
+            "📷 Send a photo of the barcode.\n\n"
+            "Tips:\n"
+            "— keep the full barcode visible;\n"
+            "— avoid reflections;\n"
+            "— keep the camera straight;\n"
+            "— do not take the photo from too far away."
+        ),
+        "barcode_photo_required": (
+            "Send a photo of the barcode."
+        ),
+        "barcode_not_detected": (
+            "No barcode could be detected in the photo.\n\n"
+            "Try taking a closer photo or enter the digits manually."
+        ),
+        "barcode_multiple_detected": (
+            "Several codes were detected. "
+            "I will use the first suitable barcode: <b>{barcode}</b>."
+        ),
+        "barcode_intro": (
+            "📦 <b>Add by barcode</b>\n\n"
+            "Enter the digits printed under the product barcode.\n"
+            "It usually contains 8–14 digits."
+        ),
+        "barcode_invalid": (
+            "Enter a barcode containing 8–14 digits."
+        ),
+        "barcode_searching": "🔍 Searching for the product...",
+        "barcode_not_found": (
+            "The product was not found or its nutrition data is incomplete.\n\n"
+            "You can add it manually."
+        ),
+        "barcode_product_found": (
+            "✅ <b>Product found</b>\n\n"
+            "🍽 <b>{name}</b>\n"
+            "{brand}"
+            "Values per 100 g:\n"
+            "🔥 {calories} kcal\n"
+            "🥩 {protein} g\n"
+            "🥑 {fat} g\n"
+            "🍚 {carbs} g\n\n"
+            "Enter the product amount in grams:"
+        ),
+        "barcode_invalid_amount": (
+            "Enter an amount between 1 and 10,000 grams."
+        ),
+        "barcode_entry_saved": (
+            "✅ <b>Product added</b>\n\n"
+            "🍽 {name}\n"
+            "⚖️ Amount: {amount} g\n\n"
+            "🔥 {calories} kcal\n"
+            "🥩 {protein} g protein\n"
+            "🥑 {fat} g fat\n"
+            "🍚 {carbs} g carbohydrates"
+        ),
+        "barcode_service_error": (
+            "The product database is temporarily unavailable. "
+            "Please try again later."
         ),
         "nutrition_history": "📋 Nutrition history",
         "nutrition_enter_calories": "🔥 Enter the number of calories:",
