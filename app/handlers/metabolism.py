@@ -2,6 +2,8 @@ from aiogram import F, Router
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery, Message
 from app.services.users import get_user_language
+from app.keyboards.navigation import get_back_to_main_keyboard
+from app.keyboards.main import get_main_keyboard
 
 from app.keyboards.metabolism import (
     activity_keyboard,
@@ -39,9 +41,18 @@ async def start_metabolism_calculation(
     await state.set_state(MetabolismForm.gender)
 
     await message.answer(
-        get_text("metabolism_intro", language),
-        reply_markup=gender_keyboard,
-    )
+    get_text("metabolism_intro", language),
+    reply_markup=gender_keyboard,
+)
+
+    await message.answer(
+    (
+        "Вы можете отменить расчёт в любой момент."
+        if language == "ru"
+        else "You can cancel the calculation at any time."
+    ),
+    reply_markup=get_back_to_main_keyboard(language),
+)
 
 
 @router.callback_query(
@@ -219,4 +230,7 @@ async def process_activity(
             "professional medical advice."
         )
 
-    await callback.message.answer(result_text)
+    await callback.message.answer(
+    result_text,
+    reply_markup=get_main_keyboard(language),
+)

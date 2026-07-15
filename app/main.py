@@ -15,6 +15,8 @@ from app.handlers.nutrition_goal import router as nutrition_goal_router
 from app.handlers.start import router as start_router
 from app.handlers.strength import router as strength_router
 from app.handlers.workout import router as workout_router
+from app.handlers.progress import router as progress_router
+from app.handlers.cancel import router as cancel_router
 from app.handlers.nutrition_entry import (
     router as nutrition_entry_router,
 )
@@ -47,6 +49,7 @@ dp = Dispatcher()
 
 dp.include_router(start_router)
 dp.include_router(features_router)
+dp.include_router(cancel_router)
 
 dp.include_router(nutrition_menu_router)
 dp.include_router(nutrition_goal_router)
@@ -55,6 +58,7 @@ dp.include_router(strength_router)
 dp.include_router(workout_router)
 dp.include_router(nutrition_entry_router)
 dp.include_router(today_router)
+dp.include_router(progress_router)
 
 dp.include_router(nutrition_history_router)
 dp.include_router(barcode_router)

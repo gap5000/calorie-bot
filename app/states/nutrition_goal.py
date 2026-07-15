@@ -6,3 +6,4 @@ class NutritionGoalForm(StatesGroup):
     protein = State()
     fat = State()
     carbs = State()
+    period = State()

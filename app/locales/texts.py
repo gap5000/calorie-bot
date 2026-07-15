@@ -145,6 +145,7 @@ TRANSLATIONS = {
             "🥩 Белки: <b>{protein} г</b>\n"
             "🥑 Жиры: <b>{fat} г</b>\n"
             "🍚 Углеводы: <b>{carbs} г</b>"
+            "⏳ Срок: <b>{period}</b>"
         ),
         "nutrition_entry_deleted": (
             "🗑 Запись удалена:\n\n"
@@ -161,12 +162,21 @@ TRANSLATIONS = {
         "add_by_barcode": "📦 Добавить по штрихкоду",
         "calculate_norm": "🔥 Рассчитать норму",
         "search_product": "🔎 Найти продукт",
+        "cancel": "❌ Отмена",
         "features": "ℹ️ Возможности бота",
         "nutrition_entry_intro": (
             "➕ <b>Добавление питания</b>\n\n"
             "Введите название блюда или приёма пищи.\n"
             "Например: <i>Завтрак</i> или <i>Курица с рисом</i>"
         ),
+        "progress": "📊 Прогресс",
+        "progress_menu": (
+            "📊 <b>Прогресс питания</b>\n\n"
+            "Выберите период."
+        ),
+        "progress_today": "📅 Сегодня",
+        "progress_week": "🗓 Эта неделя",
+        "progress_month": "📆 Этот месяц",
         "product_search_intro": (
             "🔎 <b>Поиск продукта</b>\n\n"
             "Введите название продукта.\n"
@@ -267,6 +277,19 @@ TRANSLATIONS = {
             "🥑 {fat} г жиров\n"
             "🍚 {carbs} г углеводов"
         ),
+        "choose_goal_period": (
+            "⏳ <b>На какой срок установить цель?</b>\n\n"
+            "После окончания срока бот предложит продлить "
+            "эту цель или установить новую."
+        ),
+        "goal_period_day": "1 день",
+        "goal_period_week": "1 неделя",
+        "goal_period_month": "30 дней",
+        "goal_period_unlimited": "пока вы её не измените",
+        "goal_expired": (
+            "⏳ Срок вашей цели КБЖУ закончился.\n\n"
+            "Установите новую цель или повторите прежнюю."
+        ),
         "barcode_service_error": (
             "Не удалось обратиться к базе продуктов. "
             "Попробуйте немного позже."
@@ -350,6 +373,7 @@ TRANSLATIONS = {
             "🥩 Protein: <b>{protein} g</b>\n"
             "🥑 Fat: <b>{fat} g</b>\n"
             "🍚 Carbohydrates: <b>{carbs} g</b>"
+            "⏳ Duration: <b>{period}</b>"
         ),
         "workout_cancelled": "❌ Workout cancelled.",
         "metabolism_intro": (
@@ -358,6 +382,14 @@ TRANSLATIONS = {
         "The result will be an estimate.\n\n"
         "Step 1 of 5: choose your sex."
         ),
+        "progress": "📊 Progress",
+        "progress_menu": (
+            "📊 <b>Nutrition progress</b>\n\n"
+            "Choose a period."
+        ),
+        "progress_today": "📅 Today",
+        "progress_week": "🗓 This week",
+        "progress_month": "📆 This month",
         "features_text": (
         "ℹ️ <b>Bot features</b>\n\n"
         "🥗 <b>Nutrition tracking</b>\n"
@@ -442,6 +474,7 @@ TRANSLATIONS = {
         "help": "❓ Help",
         "calculate_norm": "🔥 Calculate daily needs",
         "search_product": "🔎 Search product",
+        "cancel": "❌ Cancel",
         "features": "ℹ️ Bot features",
         "nutrition_entry_intro": (
             "➕ <b>Add nutrition</b>\n\n"
@@ -590,6 +623,19 @@ TRANSLATIONS = {
         ),
         "nutrition_invalid_macro": (
             "Enter a number between 0 and 1,000 grams."
+        ),
+        "choose_goal_period": (
+            "⏳ <b>How long should this goal remain active?</b>\n\n"
+            "When it expires, the bot will ask you to renew "
+            "it or set a new goal."
+        ),
+        "goal_period_day": "1 day",
+        "goal_period_week": "1 week",
+        "goal_period_month": "30 days",
+        "goal_period_unlimited": "until you change it",
+        "goal_expired": (
+            "⏳ Your calorie and macro goal has expired.\n\n"
+            "Set a new goal or repeat your previous one."
         ),
         "nutrition_entry_saved": (
             "✅ <b>Nutrition added</b>\n\n"

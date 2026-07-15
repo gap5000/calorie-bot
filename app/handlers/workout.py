@@ -1,5 +1,4 @@
 from aiogram import F, Router
-from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery, Message
 from sqlalchemy import select
@@ -50,27 +49,6 @@ async def start_workout(
     await message.answer(
         get_text("workout_choose_category", language),
         reply_markup=get_categories_keyboard(language),
-    )
-
-
-@router.message(Command("cancel"))
-async def cancel_workout(
-    message: Message,
-    state: FSMContext,
-) -> None:
-    current_state = await state.get_state()
-
-    if current_state is None:
-        return
-
-    data = await state.get_data()
-    language = data.get("language", "en")
-
-    await state.clear()
-
-    await message.answer(
-        get_text("workout_cancelled", language),
-        reply_markup=get_main_keyboard(language),
     )
 
 @router.callback_query(

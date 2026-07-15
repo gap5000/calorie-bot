@@ -10,6 +10,16 @@ from app.services.user_settings import update_nutrition_goal
 from app.services.users import get_user_language
 from app.states.nutrition_goal import NutritionGoalForm
 from app.services.nutrition import calculate_calories_from_macros
+from datetime import datetime, timedelta, timezone
+
+from aiogram.types import CallbackQuery, Message
+
+from app.keyboards.nutrition_goal import (
+    get_goal_period_keyboard,
+)
+from app.keyboards.navigation import (
+    get_back_to_main_keyboard,
+)
 
 router = Router(name=__name__)
 
@@ -36,7 +46,8 @@ async def start_goal_setup(
     await state.set_state(NutritionGoalForm.calories)
 
     await message.answer(
-        get_text("goal_intro", language)
+        get_text("goal_intro", language),
+        reply_markup=get_back_to_main_keyboard(language),
     )
 
 
@@ -159,9 +170,6 @@ async def process_carbs(
     message: Message,
     state: FSMContext,
 ) -> None:
-    if message.from_user is None:
-        return
-
     data = await state.get_data()
     language = data.get("language", "en")
 
@@ -173,53 +181,126 @@ async def process_carbs(
         )
         return
 
-    calories = data["calories"]
     protein = data["protein"]
     fat = data["fat"]
+
     calculated_calories = calculate_calories_from_macros(
-    protein=protein,
-    fat=fat,
-    carbs=carbs,
-)
+        protein=protein,
+        fat=fat,
+        carbs=carbs,
+    )
 
-    async with session_factory() as session:
-        result = await session.execute(
-            select(User).where(
-                User.telegram_id == message.from_user.id
-            )
-        )
+    await state.update_data(
+        carbs=carbs,
+        calculated_calories=calculated_calories,
+    )
 
-        user = result.scalar_one_or_none()
+    await state.set_state(NutritionGoalForm.period)
 
-        if user is None:
-            await state.clear()
+    await message.answer(
+        get_text("choose_goal_period", language),
+        reply_markup=get_goal_period_keyboard(language),
+    )
 
-            await message.answer(
-                "User account was not found. Send /start."
-            )
+    @router.callback_query(
+        NutritionGoalForm.period,
+        F.data.startswith("goal_period:"),
+    )
+    async def process_goal_period(
+        callback: CallbackQuery,
+        state: FSMContext,
+    ) -> None:
+        if callback.data is None:
+            await callback.answer()
             return
 
-        await update_nutrition_goal(
-            session=session,
-            user_id=user.id,
-            calories=calories,
-            protein=protein,
-            fat=fat,
-            carbs=carbs,
+        period = callback.data.split(":")[1]
+
+        allowed_periods = {
+            "day",
+            "week",
+            "month",
+            "unlimited",
+        }
+
+        if period not in allowed_periods:
+            await callback.answer("Unsupported period")
+            return
+
+        data = await state.get_data()
+        language = data.get("language", "en")
+
+        started_at = datetime.now(timezone.utc)
+
+        period_durations = {
+            "day": timedelta(days=1),
+            "week": timedelta(days=7),
+            "month": timedelta(days=30),
+        }
+
+        duration = period_durations.get(period)
+
+        expires_at = (
+            started_at + duration
+            if duration is not None
+            else None
         )
 
-        await session.commit()
+        async with session_factory() as session:
+            result = await session.execute(
+                select(User).where(
+                    User.telegram_id == callback.from_user.id
+                )
+            )
 
-    await state.clear()
+            user = result.scalar_one_or_none()
 
-    result_text = get_text("goal_saved", language).format(
-        calories=calories,
-        calculated_calories=calculated_calories,
-        protein=format_number(protein),
-        fat=format_number(fat),
-        carbs=format_number(carbs),
-    )
-    await message.answer(result_text)
+            if user is None:
+                await state.clear()
+                await callback.answer()
+
+                if callback.message:
+                    await callback.message.answer(
+                        "User account was not found. Send /start."
+                    )
+                return
+
+            await update_nutrition_goal(
+                session=session,
+                user_id=user.id,
+                calories=data["calories"],
+                protein=data["protein"],
+                fat=data["fat"],
+                carbs=data["carbs"],
+                goal_period=period,
+                goal_started_at=started_at,
+                goal_expires_at=expires_at,
+            )
+
+            await session.commit()
+
+        period_text = get_text(
+            f"goal_period_{period}",
+            language,
+        )
+
+        result_text = get_text(
+            "goal_saved",
+            language,
+        ).format(
+            calories=data["calories"],
+            calculated_calories=data["calculated_calories"],
+            protein=format_number(data["protein"]),
+            fat=format_number(data["fat"]),
+            carbs=format_number(data["carbs"]),
+            period=period_text,
+        )
+
+        await state.clear()
+        await callback.answer()
+
+        if callback.message:
+            await callback.message.answer(result_text)
 
 
 def parse_macro_value(value: str | None) -> float | None:

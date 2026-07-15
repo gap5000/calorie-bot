@@ -11,8 +11,8 @@ def get_main_keyboard(language: str) -> ReplyKeyboardMarkup:
                     text=get_text("nutrition", language)
                 ),
                 KeyboardButton(
-                    text=get_text("today", language)
-                ),
+                    text=get_text("progress", language)
+                )
             ],
             [
                 KeyboardButton(

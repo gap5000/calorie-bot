@@ -46,7 +46,20 @@ class UserSettings(Base):
         Float,
         nullable=True,
     )
+    goal_period: Mapped[str] = mapped_column(
+    String(16),
+    default="unlimited",
+    nullable=False,
+    )
 
+    goal_started_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True),
+        nullable=True,
+    )
+    goal_expires_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True),
+        nullable=True,
+    )
     timezone: Mapped[str] = mapped_column(
         String(64),
         default="UTC",
@@ -78,3 +91,4 @@ class UserSettings(Base):
     user: Mapped["User"] = relationship(
         back_populates="settings",
     )
+    
