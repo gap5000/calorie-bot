@@ -36,3 +36,35 @@ def get_product_results_keyboard(
     builder.adjust(1)
 
     return builder.as_markup()
+
+
+def get_selected_product_keyboard(
+    language: str,
+) -> InlineKeyboardMarkup:
+    builder = InlineKeyboardBuilder()
+
+    favorite_text = (
+        "⭐ Добавить в избранное"
+        if language == "ru"
+        else "⭐ Add to favorites"
+    )
+
+    continue_text = (
+        "⚖️ Ввести количество"
+        if language == "ru"
+        else "⚖️ Enter amount"
+    )
+
+    builder.button(
+        text=favorite_text,
+        callback_data="product_search:add_favorite",
+    )
+
+    builder.button(
+        text=continue_text,
+        callback_data="product_search:enter_amount",
+    )
+
+    builder.adjust(1)
+
+    return builder.as_markup()

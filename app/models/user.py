@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING
 
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.models.base import Base
+from app.models.favorite_product import FavoriteProduct
 
 if TYPE_CHECKING:
     from app.models.nutrition_entry import NutritionEntry
@@ -44,6 +45,11 @@ class User(Base):
         DateTime(timezone=True),
         server_default=func.now(),
         nullable=False,
+    )
+
+    favorite_products: Mapped[list["FavoriteProduct"]] = relationship(
+        back_populates="user",
+        cascade="all, delete-orphan",
     )
 
     settings: Mapped["UserSettings | None"] = relationship(

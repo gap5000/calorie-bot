@@ -5,6 +5,8 @@ from app.models.user import User
 from app.models.user_settings import UserSettings
 from app.models.workout import Workout
 from app.models.workout_set import WorkoutSet
+from app.models.favorite_product import FavoriteProduct
+from app.models.product import Product
 
 
 async def create_tables() -> None:
