@@ -1,10 +1,21 @@
 import aiohttp
-
+from app.keyboards.barcode_product import (
+    get_barcode_product_keyboard,
+)
+from app.services.favorite_products import (
+    add_favorite_product,
+)
 from io import BytesIO
 
 from aiogram import F, Router
 from aiogram.fsm.context import FSMContext
-from aiogram.types import CallbackQuery, Message
+from aiogram.types import (
+    CallbackQuery,
+    InlineKeyboardButton,
+    InlineKeyboardMarkup,
+    Message,
+)
+from app.keyboards.nutrition import get_nutrition_keyboard
 from sqlalchemy import select
 
 from app.database.session import session_factory
@@ -187,6 +198,108 @@ async def process_invalid_barcode_photo(
         get_text("barcode_photo_required", language)
     )
 
+@router.callback_query(
+    F.data == "barcode:enter_amount"
+)
+async def request_barcode_product_amount(
+    callback: CallbackQuery,
+    state: FSMContext,
+) -> None:
+    data = await state.get_data()
+    language = data.get("language", "en")
+    product = data.get("product")
+
+    if product is None:
+        await callback.answer(
+            "Product not found",
+            show_alert=True,
+        )
+        return
+
+    await state.set_state(BarcodeForm.amount)
+    await callback.answer()
+
+    if callback.message:
+        if language == "ru":
+            text = (
+                "⚖️ Введите количество продукта "
+                "в граммах:"
+            )
+        else:
+            text = (
+                "⚖️ Enter the product amount "
+                "in grams:"
+            )
+
+        await callback.message.answer(text)
+@router.callback_query(
+    F.data == "barcode:add_favorite"
+)
+async def add_barcode_product_to_favorites(
+    callback: CallbackQuery,
+    state: FSMContext,
+) -> None:
+    data = await state.get_data()
+    language = data.get("language", "en")
+    product = data.get("product")
+
+    if product is None:
+        await callback.answer(
+            "Product not found",
+            show_alert=True,
+        )
+        return
+
+    product_id = product.get("id")
+
+    if product_id is None:
+        await callback.answer(
+            "Product is not saved locally",
+            show_alert=True,
+        )
+        return
+
+    async with session_factory() as session:
+        result = await session.execute(
+            select(User).where(
+                User.telegram_id == callback.from_user.id
+            )
+        )
+
+        user = result.scalar_one_or_none()
+
+        if user is None:
+            await callback.answer(
+                "User account was not found",
+                show_alert=True,
+            )
+            return
+
+        _, created = await add_favorite_product(
+            session=session,
+            user_id=user.id,
+            product_id=product_id,
+        )
+
+        await session.commit()
+
+    if created:
+        text = (
+            "⭐ Продукт добавлен в избранное"
+            if language == "ru"
+            else "⭐ Product added to favorites"
+        )
+    else:
+        text = (
+            "⭐ Этот продукт уже есть в избранном"
+            if language == "ru"
+            else "⭐ This product is already in favorites"
+        )
+
+    await callback.answer(
+        text,
+        show_alert=True,
+    )
 
 @router.message(BarcodeForm.amount)
 async def process_product_amount(
@@ -285,10 +398,66 @@ async def process_product_amount(
             protein=format_number(protein),
             fat=format_number(fat),
             carbs=format_number(carbs),
-        )
+        ),
+        reply_markup=get_barcode_finish_keyboard(language),
     )
 
+@router.callback_query(
+    F.data == "barcode:add_another"
+)
+async def add_another_barcode_product(
+    callback: CallbackQuery,
+    state: FSMContext,
+) -> None:
+    language = await get_user_language(
+        callback.from_user.id
+    )
 
+    await state.clear()
+    await state.update_data(language=language)
+    await callback.answer()
+
+    if callback.message:
+        await callback.message.answer(
+            get_text(
+                "barcode_choose_method",
+                language,
+            ),
+            reply_markup=get_barcode_method_keyboard(
+                language
+            ),
+        )
+
+@router.callback_query(
+    F.data == "barcode:finish"
+)
+async def finish_barcode_entry(
+    callback: CallbackQuery,
+    state: FSMContext,
+) -> None:
+    language = await get_user_language(
+        callback.from_user.id
+    )
+
+    await state.clear()
+    await callback.answer()
+
+    if language == "ru":
+        text = (
+            "✅ Добавление продуктов завершено.\n\n"
+            "Вы вернулись в раздел питания."
+        )
+    else:
+        text = (
+            "✅ Product entry completed.\n\n"
+            "You have returned to the nutrition section."
+        )
+
+    if callback.message:
+        await callback.message.answer(
+            text,
+            reply_markup=get_nutrition_keyboard(language),
+        )
 async def find_product_and_request_amount(
     message: Message,
     state: FSMContext,
@@ -390,7 +559,6 @@ async def prepare_product_for_amount(
     language: str,
 ) -> None:
     await state.update_data(product=product)
-    await state.set_state(BarcodeForm.amount)
 
     brand_line = (
         f"🏷 {product['brand']}\n\n"
@@ -399,27 +567,27 @@ async def prepare_product_for_amount(
     )
 
     await searching_message.edit_text(
-        get_text(
-            "barcode_product_found",
-            language,
-        ).format(
-            name=product["name"],
-            brand=brand_line,
-            calories=format_number(
-                product["calories_100g"]
-            ),
-            protein=format_number(
-                product["protein_100g"]
-            ),
-            fat=format_number(
-                product["fat_100g"]
-            ),
-            carbs=format_number(
-                product["carbs_100g"]
-            ),
-        )
-    )
-
+    get_text(
+        "barcode_product_found",
+        language,
+    ).format(
+        name=product["name"],
+        brand=brand_line,
+        calories=format_number(
+            product["calories_100g"]
+        ),
+        protein=format_number(
+            product["protein_100g"]
+        ),
+        fat=format_number(
+            product["fat_100g"]
+        ),
+        carbs=format_number(
+            product["carbs_100g"]
+        ),
+    ),
+    reply_markup=get_barcode_product_keyboard(language),
+)
 
 def product_to_dict(product) -> dict:
     return {
@@ -471,7 +639,32 @@ def get_barcode_error_text(
         "barcode_service_error",
         language,
     )
+def get_barcode_finish_keyboard(
+    language: str,
+) -> InlineKeyboardMarkup:
+    if language == "ru":
+        add_more_text = "📦 Добавить ещё"
+        finish_text = "✅ Завершить"
+    else:
+        add_more_text = "📦 Add another"
+        finish_text = "✅ Finish"
 
+    return InlineKeyboardMarkup(
+        inline_keyboard=[
+            [
+                InlineKeyboardButton(
+                    text=add_more_text,
+                    callback_data="barcode:add_another",
+                )
+            ],
+            [
+                InlineKeyboardButton(
+                    text=finish_text,
+                    callback_data="barcode:finish",
+                )
+            ],
+        ]
+    )
 
 def format_number(value: float) -> str:
     number = float(value)

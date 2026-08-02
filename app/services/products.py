@@ -1,7 +1,8 @@
-from sqlalchemy import func, select
+from sqlalchemy import case, func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.product import Product
+
 
 
 async def get_product_by_barcode(
@@ -27,19 +28,62 @@ async def search_products_by_name(
     if not normalized_query:
         return []
 
+    contains_pattern = f"%{normalized_query}%"
+    starts_pattern = f"{normalized_query}%"
+
+    relevance = case(
+        (
+            func.lower(Product.name)
+            == normalized_query,
+            0,
+        ),
+        (
+            func.lower(Product.name).like(
+                starts_pattern
+            ),
+            1,
+        ),
+        (
+            func.lower(Product.name).like(
+                contains_pattern
+            ),
+            2,
+        ),
+        (
+            func.lower(
+                func.coalesce(Product.brand, "")
+            ).like(starts_pattern),
+            3,
+        ),
+        (
+            func.lower(
+                func.coalesce(Product.brand, "")
+            ).like(contains_pattern),
+            4,
+        ),
+        else_=5,
+    )
+
     result = await session.execute(
         select(Product)
         .where(
-            func.lower(Product.name).contains(
-                normalized_query
+            or_(
+                func.lower(Product.name).like(
+                    contains_pattern
+                ),
+                func.lower(
+                    func.coalesce(Product.brand, "")
+                ).like(contains_pattern),
             )
         )
-        .order_by(Product.name)
+        .order_by(
+            relevance,
+            Product.name,
+        )
         .limit(limit)
     )
 
     return list(result.scalars().all())
-
 
 async def create_or_update_product(
     session: AsyncSession,

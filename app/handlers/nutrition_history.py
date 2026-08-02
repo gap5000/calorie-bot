@@ -112,12 +112,21 @@ async def delete_nutrition_entry(
         await callback.answer()
         return
 
+    now = datetime.now(timezone.utc)
+    day_start = now.replace(
+        hour=0,
+        minute=0,
+        second=0,
+        microsecond=0,
+    )
+
     async with session_factory() as session:
         user_result = await session.execute(
             select(User).where(
                 User.telegram_id == callback.from_user.id
             )
         )
+
         user = user_result.scalar_one_or_none()
 
         if user is None:
@@ -149,19 +158,51 @@ async def delete_nutrition_entry(
         await session.delete(entry)
         await session.commit()
 
-        await callback.answer()
-
-    if callback.message:
-        await callback.message.edit_reply_markup(
-            reply_markup=None
+        entries_result = await session.execute(
+            select(NutritionEntry)
+            .where(
+                NutritionEntry.user_id == user.id,
+                NutritionEntry.created_at >= day_start,
+            )
+            .order_by(
+                NutritionEntry.created_at.desc()
+            )
         )
 
-        await callback.message.answer(
+        entries = list(
+            entries_result.scalars().all()
+        )
+
+    await callback.answer(
+        get_text(
+            "nutrition_entry_deleted",
+            language,
+        ).format(
+            name=entry_name,
+            calories=entry_calories,
+        ),
+        show_alert=True,
+    )
+
+    if callback.message is None:
+        return
+
+    if entries:
+        await callback.message.edit_text(
             get_text(
-                "nutrition_entry_deleted",
+                "nutrition_history_title",
                 language,
-            ).format(
-                name=entry_name,
-                calories=entry_calories,
-            )
+            ),
+            reply_markup=get_nutrition_history_keyboard(
+                entries=entries,
+                language=language,
+            ),
+        )
+    else:
+        await callback.message.edit_text(
+            get_text(
+                "nutrition_history_empty",
+                language,
+            ),
+            reply_markup=None,
         )

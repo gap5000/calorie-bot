@@ -4,6 +4,7 @@ from aiogram import F, Router
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery, Message
 from sqlalchemy import select
+from app.services.favorite_products import add_favorite_product
 
 from app.database.session import session_factory
 from app.keyboards.product_search import (
@@ -290,10 +291,80 @@ async def select_product(
             ),
         )
 
+@router.callback_query(
+    ProductSearchForm.selection,
+    F.data == "product_search:add_favorite",
+)
+async def add_selected_product_to_favorites(
+    callback: CallbackQuery,
+    state: FSMContext,
+) -> None:
+    data = await state.get_data()
+    language = data.get("language", "en")
+    product = data.get("selected_product")
 
+    if product is None:
+        await callback.answer(
+            "Product not found",
+            show_alert=True,
+        )
+        return
+
+    product_id = product.get("id")
+
+    if product_id is None:
+        await callback.answer(
+            "Product is not saved locally",
+            show_alert=True,
+        )
+        return
+
+    async with session_factory() as session:
+        result = await session.execute(
+            select(User).where(
+                User.telegram_id == callback.from_user.id
+            )
+        )
+
+        user = result.scalar_one_or_none()
+
+        if user is None:
+            await callback.answer(
+                "User account was not found",
+                show_alert=True,
+            )
+            return
+
+        _, created = await add_favorite_product(
+            session=session,
+            user_id=user.id,
+            product_id=product_id,
+        )
+
+        await session.commit()
+
+    if created:
+        text = (
+            "⭐ Продукт добавлен в избранное"
+            if language == "ru"
+            else "⭐ Product added to favorites"
+        )
+    else:
+        text = (
+            "⭐ Этот продукт уже есть в избранном"
+            if language == "ru"
+            else "⭐ This product is already in favorites"
+        )
+
+    await callback.answer(
+        text,
+        show_alert=True,
+    )
+    
 @router.callback_query(
     ProductSearchForm.selection,
     F.data == "product_search:enter_amount",
+
 )
 async def request_product_amount(
     callback: CallbackQuery,
@@ -328,6 +399,75 @@ async def request_product_amount(
 
         await callback.message.answer(text)
 
+@router.callback_query(
+    ProductSearchForm.selection,
+    F.data == "product_search:add_favorite",
+)
+async def add_selected_product_to_favorites(
+    callback: CallbackQuery,
+    state: FSMContext,
+) -> None:
+    data = await state.get_data()
+    language = data.get("language", "en")
+    product = data.get("selected_product")
+
+    if product is None:
+        await callback.answer(
+            "Product not found",
+            show_alert=True,
+        )
+        return
+
+    product_id = product.get("id")
+
+    if product_id is None:
+        await callback.answer(
+            "Product is not saved locally",
+            show_alert=True,
+        )
+        return
+
+    async with session_factory() as session:
+        result = await session.execute(
+            select(User).where(
+                User.telegram_id == callback.from_user.id
+            )
+        )
+
+        user = result.scalar_one_or_none()
+
+        if user is None:
+            await callback.answer(
+                "User account was not found",
+                show_alert=True,
+            )
+            return
+
+        _, created = await add_favorite_product(
+            session=session,
+            user_id=user.id,
+            product_id=product_id,
+        )
+
+        await session.commit()
+
+    if created:
+        text = (
+            "⭐ Продукт добавлен в избранное"
+            if language == "ru"
+            else "⭐ Product added to favorites"
+        )
+    else:
+        text = (
+            "⭐ Этот продукт уже есть в избранном"
+            if language == "ru"
+            else "⭐ This product is already in favorites"
+        )
+
+    await callback.answer(
+        text,
+        show_alert=True,
+    )
 
 @router.message(ProductSearchForm.amount)
 async def process_product_amount(

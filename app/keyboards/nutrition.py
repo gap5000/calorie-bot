@@ -13,31 +13,40 @@ def get_nutrition_keyboard(
     )
 
     return ReplyKeyboardMarkup(
-        keyboard=[
-            [
-                KeyboardButton(
-                    text=get_text("add_nutrition", language)
-                ),
-            ],
-            [
-                KeyboardButton(
-                    text=get_text("search_product", language)
-                ),
-                KeyboardButton(
-                    text=get_text("add_by_barcode", language)
-                ),
-            ],
-            [
-                KeyboardButton(
-                    text=get_text(
-                        "nutrition_history",
-                        language,
-                    )
-                ),
-            ],
-            [
-                KeyboardButton(text=back_text),
-            ],
+    keyboard=[
+        [
+            KeyboardButton(
+                text=get_text("add_nutrition", language)
+            ),
         ],
-        resize_keyboard=True,
-    )
+        [
+            KeyboardButton(
+                text=get_text("search_product", language)
+            ),
+            KeyboardButton(
+                text=get_text("add_by_barcode", language)
+            ),
+        ],
+        [
+            KeyboardButton(
+                text=(
+                    "⭐ Избранное"
+                    if language == "ru"
+                    else "⭐ Favorites"
+                )
+            ),
+        ],
+        [
+            KeyboardButton(
+                text=get_text(
+                    "nutrition_history",
+                    language,
+                )
+            ),
+        ],
+        [
+            KeyboardButton(text=back_text),
+        ],
+    ],
+    resize_keyboard=True,
+)
