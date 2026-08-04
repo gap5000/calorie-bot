@@ -6,6 +6,11 @@ from app.keyboards.strength import get_strength_keyboard
 from app.locales.texts import get_text
 from app.services.users import get_user_language
 
+from sqlalchemy import select
+
+from app.database.session import session_factory
+from app.models.user import User
+from app.services.workouts import get_user_workout_diary
 router = Router(name=__name__)
 
 
@@ -66,25 +71,83 @@ async def workout_diary_handler(
         message.from_user.id
     )
 
-    if language == "ru":
+    async with session_factory() as session:
+        user_result = await session.execute(
+            select(User).where(
+                User.telegram_id == message.from_user.id
+            )
+        )
+
+        user = user_result.scalar_one_or_none()
+
+        if user is None:
+            await message.answer(
+                "User account was not found. Send /start."
+            )
+            return
+
+        entries = await get_user_workout_diary(
+            session=session,
+            user_id=user.id,
+            limit=100,
+        )
+
+    if not entries:
         text = (
             "📓 <b>Дневник тренировок</b>\n\n"
-            "Здесь будут храниться результаты "
-            "по каждому упражнению.\n\n"
-            "Функцию подключим следующим шагом."
+            "Записей пока нет."
+            if language == "ru"
+            else (
+                "📓 <b>Workout diary</b>\n\n"
+                "There are no entries yet."
+            )
         )
-    else:
-        text = (
-            "📓 <b>Workout diary</b>\n\n"
-            "Your exercise results will be stored here.\n\n"
-            "We will connect this feature next."
+
+        await message.answer(
+            text,
+            reply_markup=get_strength_keyboard(language),
         )
+        return
+
+    lines = [
+        (
+            "📓 <b>Дневник тренировок</b>"
+            if language == "ru"
+            else "📓 <b>Workout diary</b>"
+        ),
+        "",
+    ]
+
+    current_date = None
+
+    for entry in entries:
+        created_at = entry["created_at"]
+        date_text = created_at.strftime("%d.%m.%Y")
+
+        if date_text != current_date:
+            if current_date is not None:
+                lines.append("")
+
+            lines.append(f"<b>{date_text}</b>")
+            current_date = date_text
+
+        weight = format_number(entry["weight"])
+        repetitions = entry["repetitions"]
+        exercise_name = entry["exercise_name"]
+
+        unit = "кг" if language == "ru" else "kg"
+
+        lines.append(
+            f"• {exercise_name} — "
+            f"{weight} {unit} × {repetitions}"
+        )
+
+    text = "\n".join(lines)
 
     await message.answer(
         text,
         reply_markup=get_strength_keyboard(language),
     )
-
 
 @router.message(
     F.text.in_(
@@ -148,3 +211,11 @@ async def back_to_main_menu_handler(
         get_text("main_menu", language),
         reply_markup=get_main_keyboard(language),
     )
+
+def format_number(value: float) -> str:
+    number = float(value)
+
+    if number.is_integer():
+        return str(int(number))
+
+    return f"{number:.1f}"

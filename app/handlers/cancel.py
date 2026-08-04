@@ -10,14 +10,7 @@ router = Router(name=__name__)
 
 
 @router.message(Command("cancel"))
-@router.message(
-    F.text.in_(
-        {
-            "⬅️ Главное меню",
-            "⬅️ Main menu",
-        }
-    )
-)
+
 async def cancel_handler(
     message: Message,
     state: FSMContext,
