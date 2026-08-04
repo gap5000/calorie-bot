@@ -14,6 +14,19 @@ from datetime import datetime, timedelta, timezone
 
 from aiogram.types import CallbackQuery, Message
 
+from app.keyboards.main import get_main_keyboard
+from app.keyboards.metabolism import gender_keyboard
+from app.services.user_settings import (
+    get_or_create_user_settings,
+    update_nutrition_goal,
+)
+from app.states.metabolism import MetabolismForm
+
+from app.keyboards.nutrition_goal import (
+    get_goal_actions_keyboard,
+    get_goal_period_keyboard,
+)
+
 from app.keyboards.nutrition_goal import (
     get_goal_period_keyboard,
 )
@@ -39,17 +52,178 @@ async def start_goal_setup(
     if message.from_user is None:
         return
 
-    language = await get_user_language(message.from_user.id)
+    language = await get_user_language(
+        message.from_user.id
+    )
+
+    await state.clear()
+
+    async with session_factory() as session:
+        user_result = await session.execute(
+            select(User).where(
+                User.telegram_id == message.from_user.id
+            )
+        )
+
+        user = user_result.scalar_one_or_none()
+
+        if user is None:
+            await message.answer(
+                "User account was not found. Send /start."
+            )
+            return
+
+        settings = await get_or_create_user_settings(
+            session=session,
+            user_id=user.id,
+        )
+
+        await session.commit()
+
+    goal_is_configured = all(
+        value is not None
+        for value in (
+            settings.daily_calories,
+            settings.daily_protein,
+            settings.daily_fat,
+            settings.daily_carbs,
+        )
+    )
+
+    if goal_is_configured:
+        period_text = get_text(
+            f"goal_period_{settings.goal_period}",
+            language,
+        )
+
+        if language == "ru":
+            text = (
+                "🎯 <b>Дневная цель КБЖУ</b>\n\n"
+                "<b>Текущие значения:</b>\n\n"
+                f"🔥 Калории: "
+                f"<b>{settings.daily_calories} ккал</b>\n"
+                f"🥩 Белки: "
+                f"<b>{format_number(settings.daily_protein)} г</b>\n"
+                f"🥑 Жиры: "
+                f"<b>{format_number(settings.daily_fat)} г</b>\n"
+                f"🍚 Углеводы: "
+                f"<b>{format_number(settings.daily_carbs)} г</b>\n\n"
+                f"📅 Период: <b>{period_text}</b>\n\n"
+                "Выберите действие:"
+            )
+        else:
+            text = (
+                "🎯 <b>Daily calorie and macro goal</b>\n\n"
+                "<b>Current values:</b>\n\n"
+                f"🔥 Calories: "
+                f"<b>{settings.daily_calories} kcal</b>\n"
+                f"🥩 Protein: "
+                f"<b>{format_number(settings.daily_protein)} g</b>\n"
+                f"🥑 Fat: "
+                f"<b>{format_number(settings.daily_fat)} g</b>\n"
+                f"🍚 Carbs: "
+                f"<b>{format_number(settings.daily_carbs)} g</b>\n\n"
+                f"📅 Period: <b>{period_text}</b>\n\n"
+                "Choose an action:"
+            )
+    else:
+        text = (
+            "🎯 <b>Дневная цель КБЖУ</b>\n\n"
+            "Цель пока не настроена.\n\n"
+            "Вы можете ввести значения вручную "
+            "или сначала рассчитать примерную норму."
+            if language == "ru"
+            else (
+                "🎯 <b>Daily calorie and macro goal</b>\n\n"
+                "The goal has not been configured yet.\n\n"
+                "You can enter the values manually "
+                "or calculate an estimated daily need first."
+            )
+        )
+
+    await message.answer(
+        text,
+        reply_markup=get_goal_actions_keyboard(language),
+    )
+
+@router.callback_query(
+    F.data == "nutrition_goal:edit"
+)
+async def start_manual_goal_edit(
+    callback: CallbackQuery,
+    state: FSMContext,
+) -> None:
+    language = await get_user_language(
+        callback.from_user.id
+    )
 
     await state.clear()
     await state.update_data(language=language)
     await state.set_state(NutritionGoalForm.calories)
 
-    await message.answer(
-        get_text("goal_intro", language),
-        reply_markup=get_back_to_main_keyboard(language),
+    await callback.answer()
+
+    if callback.message:
+        await callback.message.answer(
+            get_text("goal_intro", language),
+            reply_markup=get_back_to_main_keyboard(language),
+        )
+
+@router.callback_query(
+    F.data == "nutrition_goal:calculate"
+)
+async def start_goal_calculation(
+    callback: CallbackQuery,
+    state: FSMContext,
+) -> None:
+    language = await get_user_language(
+        callback.from_user.id
     )
 
+    await state.clear()
+    await state.update_data(language=language)
+    await state.set_state(MetabolismForm.gender)
+
+    await callback.answer()
+
+    if callback.message:
+        await callback.message.answer(
+            get_text("metabolism_intro", language),
+            reply_markup=gender_keyboard,
+        )
+
+        await callback.message.answer(
+            (
+                "Вы можете вернуться в главное меню "
+                "в любой момент."
+                if language == "ru"
+                else (
+                    "You can return to the main menu "
+                    "at any time."
+                )
+            ),
+            reply_markup=get_back_to_main_keyboard(language),
+        )
+
+@router.callback_query(
+    F.data == "nutrition_goal:back"
+)
+async def back_from_nutrition_goal(
+    callback: CallbackQuery,
+    state: FSMContext,
+) -> None:
+    language = await get_user_language(
+        callback.from_user.id
+    )
+
+    await state.clear()
+    await callback.answer()
+
+    if callback.message:
+        await callback.message.answer(
+            get_text("main_menu", language),
+            reply_markup=get_main_keyboard(language),
+        )
 
 @router.message(NutritionGoalForm.calories)
 async def process_calories(

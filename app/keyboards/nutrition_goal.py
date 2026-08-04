@@ -31,3 +31,36 @@ def get_goal_period_keyboard(
     builder.adjust(1)
 
     return builder.as_markup()
+
+def get_goal_actions_keyboard(
+    language: str,
+) -> InlineKeyboardMarkup:
+    builder = InlineKeyboardBuilder()
+
+    if language == "ru":
+        edit_text = "✏️ Изменить цель"
+        calculate_text = "🔥 Рассчитать автоматически"
+        back_text = "⬅️ Главное меню"
+    else:
+        edit_text = "✏️ Edit goal"
+        calculate_text = "🔥 Calculate automatically"
+        back_text = "⬅️ Main menu"
+
+    builder.button(
+        text=edit_text,
+        callback_data="nutrition_goal:edit",
+    )
+
+    builder.button(
+        text=calculate_text,
+        callback_data="nutrition_goal:calculate",
+    )
+
+    builder.button(
+        text=back_text,
+        callback_data="nutrition_goal:back",
+    )
+
+    builder.adjust(1)
+
+    return builder.as_markup()

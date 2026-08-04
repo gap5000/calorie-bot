@@ -58,25 +58,23 @@ dp = Dispatcher()
 dp.include_router(start_router)
 dp.include_router(features_router)
 dp.include_router(cancel_router)
+dp.include_router(navigation_router)
 
 dp.include_router(nutrition_menu_router)
 dp.include_router(nutrition_goal_router)
 dp.include_router(metabolism_router)
 dp.include_router(strength_router)
 dp.include_router(exercises_router)
-
-dp.include_router(navigation_router)
 dp.include_router(nutrition_entry_router)
 dp.include_router(today_router)
 dp.include_router(progress_router)
-
 dp.include_router(nutrition_history_router)
 dp.include_router(barcode_router)
 dp.include_router(product_search_router)
 dp.include_router(favorites_router)
 
 async def main() -> None:
-    
+
     bot_info = await bot.get_me()
 
     print(f"Бот @{bot_info.username} успешно запущен")
