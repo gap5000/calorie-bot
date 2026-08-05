@@ -56,8 +56,12 @@ async def start_barcode_entry(
         message.from_user.id
     )
 
-    await state.clear()
-    await state.update_data(language=language)
+    data = await state.get_data()
+
+    await state.update_data(
+        language=language,
+        meal_type=data.get("meal_type", "snack"),
+)
 
     await message.answer(
         get_text("barcode_choose_method", language),

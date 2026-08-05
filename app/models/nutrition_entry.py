@@ -25,6 +25,13 @@ class NutritionEntry(Base):
         String(100),
         nullable=True,
     )
+    meal_type: Mapped[str] = mapped_column(
+        String(16),
+        default="snack",
+        server_default="snack",
+        nullable=False,
+        index=True,
+    )
 
     calories: Mapped[int] = mapped_column(
         Integer,

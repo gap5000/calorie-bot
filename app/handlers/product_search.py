@@ -5,6 +5,8 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery, Message
 from sqlalchemy import select
 from app.services.favorite_products import add_favorite_product
+from app.keyboards.meal_type import get_meal_type_keyboard
+from app.keyboards.nutrition import get_nutrition_keyboard
 
 from app.database.session import session_factory
 from app.keyboards.product_search import (
@@ -46,8 +48,12 @@ async def start_product_search(
         message.from_user.id
     )
 
-    await state.clear()
-    await state.update_data(language=language)
+    data = await state.get_data()
+    await state.update_data(
+        language=language,
+        meal_type=data.get("meal_type", "snack"),
+)
+
     await state.set_state(ProductSearchForm.query)
 
     await message.answer(
@@ -363,44 +369,6 @@ async def add_selected_product_to_favorites(
     
 @router.callback_query(
     ProductSearchForm.selection,
-    F.data == "product_search:enter_amount",
-
-)
-async def request_product_amount(
-    callback: CallbackQuery,
-    state: FSMContext,
-) -> None:
-    data = await state.get_data()
-    language = data.get("language", "en")
-
-    selected_product = data.get("selected_product")
-
-    if selected_product is None:
-        await callback.answer(
-            "Product not found",
-            show_alert=True,
-        )
-        return
-
-    await state.set_state(ProductSearchForm.amount)
-    await callback.answer()
-
-    if callback.message:
-        if language == "ru":
-            text = (
-                "⚖️ Введите количество продукта "
-                "в граммах:"
-            )
-        else:
-            text = (
-                "⚖️ Enter the product amount "
-                "in grams:"
-            )
-
-        await callback.message.answer(text)
-
-@router.callback_query(
-    ProductSearchForm.selection,
     F.data == "product_search:add_favorite",
 )
 async def add_selected_product_to_favorites(
@@ -469,6 +437,39 @@ async def add_selected_product_to_favorites(
         show_alert=True,
     )
 
+@router.callback_query(
+    ProductSearchForm.selection,
+    F.data == "product_search:enter_amount",
+)
+async def request_product_amount(
+    callback: CallbackQuery,
+    state: FSMContext,
+) -> None:
+    data = await state.get_data()
+    language = data.get("language", "en")
+    selected_product = data.get("selected_product")
+
+    if selected_product is None:
+        await callback.answer(
+            "Product not found",
+            show_alert=True,
+        )
+        return
+
+    await state.set_state(ProductSearchForm.amount)
+    await callback.answer()
+
+    if callback.message:
+        await callback.message.answer(
+            (
+                "⚖️ Введите количество продукта в граммах:"
+                if language == "ru"
+                else (
+                    "⚖️ Enter the product amount in grams:"
+                )
+            )
+        )
+
 @router.message(ProductSearchForm.amount)
 async def process_product_amount(
     message: Message,
@@ -479,6 +480,7 @@ async def process_product_amount(
 
     data = await state.get_data()
     language = data.get("language", "en")
+    meal_type = data.get("meal_type", "snack")
 
     try:
         amount = float(
@@ -532,6 +534,11 @@ async def process_product_amount(
         product["carbs_100g"] * multiplier,
         1,
     )
+    fiber = round(
+        product.get("fiber_100g", 0.0)
+        * multiplier,
+        1,
+    )
 
     async with session_factory() as session:
         result = await session.execute(
@@ -553,10 +560,12 @@ async def process_product_amount(
         entry = NutritionEntry(
             user_id=user.id,
             name=product["name"],
+            meal_type=meal_type,
             calories=calories,
             protein=protein,
             fat=fat,
             carbs=carbs,
+            fiber=fiber,
         )
 
         session.add(entry)
@@ -577,7 +586,6 @@ async def process_product_amount(
             carbs=format_number(carbs),
         )
     )
-
 
 def product_to_dict(product) -> dict:
     return {
