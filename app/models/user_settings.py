@@ -75,6 +75,13 @@ class UserSettings(Base):
         default=True,
         nullable=False,
     )
+    
+    show_fiber: Mapped[bool] = mapped_column(
+        Boolean,
+        default=True,
+        server_default="true",
+        nullable=False,
+    )
 
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),

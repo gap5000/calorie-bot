@@ -45,6 +45,13 @@ class NutritionEntry(Base):
         Float,
         nullable=False,
     )
+    
+    fiber: Mapped[float] = mapped_column(
+        Float,
+        default=0.0,
+        server_default="0",
+        nullable=False,
+    )
 
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),

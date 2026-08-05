@@ -31,7 +31,7 @@ class Product(Base):
     )
 
     brand: Mapped[str | None] = mapped_column(
-        String(150),
+        String(500),
         nullable=True,
     )
 
@@ -52,6 +52,13 @@ class Product(Base):
 
     carbs_100g: Mapped[float] = mapped_column(
         Float,
+        nullable=False,
+    )
+
+    fiber_100g: Mapped[float] = mapped_column(
+        Float,
+        default=0.0,
+        server_default="0",
         nullable=False,
     )
 

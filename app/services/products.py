@@ -4,14 +4,18 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.models.product import Product
 
 
-
 async def get_product_by_barcode(
     session: AsyncSession,
     barcode: str,
 ) -> Product | None:
+    normalized_barcode = barcode.strip()
+
+    if not normalized_barcode:
+        return None
+
     result = await session.execute(
         select(Product).where(
-            Product.barcode == barcode,
+            Product.barcode == normalized_barcode,
         )
     )
 
@@ -85,6 +89,7 @@ async def search_products_by_name(
 
     return list(result.scalars().all())
 
+
 async def create_or_update_product(
     session: AsyncSession,
     *,
@@ -95,26 +100,47 @@ async def create_or_update_product(
     protein_100g: float,
     fat_100g: float,
     carbs_100g: float,
+    fiber_100g: float = 0.0,
     source: str,
 ) -> Product:
-    product = None
+    normalized_name = name.strip()[:150]
 
-    if barcode:
+    normalized_brand = (
+        brand.strip()[:500]
+        if brand and brand.strip()
+        else None
+    )
+
+    normalized_barcode = (
+        barcode.strip()[:32]
+        if barcode and barcode.strip()
+        else None
+    )
+
+    normalized_source = source.strip()[:32] or "manual"
+
+    if not normalized_name:
+        normalized_name = "Unnamed product"
+
+    product: Product | None = None
+
+    if normalized_barcode:
         product = await get_product_by_barcode(
             session=session,
-            barcode=barcode,
+            barcode=normalized_barcode,
         )
 
     if product is None:
         product = Product(
-            name=name,
-            brand=brand,
-            barcode=barcode,
-            calories_100g=calories_100g,
-            protein_100g=protein_100g,
-            fat_100g=fat_100g,
-            carbs_100g=carbs_100g,
-            source=source,
+            name=normalized_name,
+            brand=normalized_brand,
+            barcode=normalized_barcode,
+            calories_100g=float(calories_100g),
+            protein_100g=float(protein_100g),
+            fat_100g=float(fat_100g),
+            carbs_100g=float(carbs_100g),
+            fiber_100g=float(fiber_100g),
+            source=normalized_source,
         )
 
         session.add(product)
@@ -122,13 +148,15 @@ async def create_or_update_product(
 
         return product
 
-    product.name = name
-    product.brand = brand
-    product.calories_100g = calories_100g
-    product.protein_100g = protein_100g
-    product.fat_100g = fat_100g
-    product.carbs_100g = carbs_100g
-    product.source = source
+    product.name = normalized_name
+    product.brand = normalized_brand
+    product.barcode = normalized_barcode
+    product.calories_100g = float(calories_100g)
+    product.protein_100g = float(protein_100g)
+    product.fat_100g = float(fat_100g)
+    product.carbs_100g = float(carbs_100g)
+    product.fiber_100g = float(fiber_100g)
+    product.source = normalized_source
 
     await session.flush()
 

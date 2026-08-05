@@ -8,8 +8,6 @@ from sqlalchemy import pool
 from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import async_engine_from_config
 
-from app.models.base import Base
-
 # Импортируем все модели, чтобы Alembic видел их
 # внутри Base.metadata.
 from app.models.exercise import Exercise
@@ -20,8 +18,13 @@ from app.models.user import User
 from app.models.user_settings import UserSettings
 from app.models.workout import Workout
 from app.models.workout_set import WorkoutSet
+from app.models.dish import Dish
+from app.models.dish_ingredient import DishIngredient
+import app.models
 
+from app.models.base import Base
 
+target_metadata = Base.metadata
 load_dotenv()
 
 config = context.config

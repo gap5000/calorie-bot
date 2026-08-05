@@ -12,6 +12,7 @@ if TYPE_CHECKING:
     from app.models.nutrition_entry import NutritionEntry
     from app.models.user_settings import UserSettings
     from app.models.workout import Workout
+    from app.models.dish import Dish
 
 
 class User(Base):
@@ -77,6 +78,10 @@ class User(Base):
     nutrition_entries: Mapped[
         list["NutritionEntry"]
     ] = relationship(
+        back_populates="user",
+        cascade="all, delete-orphan",
+    )
+    dishes: Mapped[list["Dish"]] = relationship(
         back_populates="user",
         cascade="all, delete-orphan",
     )

@@ -1,5 +1,6 @@
 import asyncio
 import os
+import app.models
 
 from aiogram import Bot, Dispatcher
 from aiogram.client.default import DefaultBotProperties
@@ -38,6 +39,12 @@ from app.handlers.exercises import (
     router as exercises_router,
 )
 load_dotenv()
+from app.handlers.settings import (
+    router as settings_router,
+)
+from app.handlers.dishes import (
+    router as dishes_router,
+)
 
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 
@@ -59,6 +66,8 @@ dp.include_router(start_router)
 dp.include_router(features_router)
 dp.include_router(cancel_router)
 dp.include_router(navigation_router)
+dp.include_router(settings_router)
+dp.include_router(dishes_router)
 
 dp.include_router(nutrition_menu_router)
 dp.include_router(nutrition_goal_router)
